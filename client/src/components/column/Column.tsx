@@ -24,7 +24,7 @@ const Column: React.FC<ColumnProps> = ({
 					ref={provided.innerRef}
 					{...provided.droppableProps}
 					className={`
-            w-80 p-4 rounded-lg shrink-0 min-h-[600px]
+            w-[30%] p-4 rounded-lg shrink-0 min-h-[600px]
             ${
 							snapshot.isDraggingOver
 								? 'bg-indigo-50 border-indigo-400'
@@ -39,7 +39,12 @@ const Column: React.FC<ColumnProps> = ({
 
 					<div>
 						{cards.map((card, index) => (
-							<CardItem key={card.id} card={card} index={index} />
+							<CardItem
+								key={card.id}
+								card={card}
+								index={index}
+								boardId={boardId}
+							/>
 						))}
 						{provided.placeholder}
 					</div>

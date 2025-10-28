@@ -16,6 +16,7 @@ export class BoardMapper {
         description: card.description,
         column: card.column,
         orderIndex: card.orderIndex,
+        updatedAt: card.updatedAt,
       };
       grouped[card.column as keyof typeof grouped].push(cardDto);
     }

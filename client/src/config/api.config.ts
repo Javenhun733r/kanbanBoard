@@ -3,6 +3,8 @@ export const API_URL: string = SERVER_URL;
 export const BOARDS_API_TAG = 'Board';
 export const getBoardUrl = (uniqueHashedId: string) =>
 	`/boards/${uniqueHashedId}`;
+export const updateBoardUrl = (uniqueHashedId: string) =>
+	`/boards/${uniqueHashedId}`;
 export const createBoardUrl = '/boards';
 export const createCardUrl = (uniqueHashedId: string) =>
 	`/boards/${uniqueHashedId}/cards`;

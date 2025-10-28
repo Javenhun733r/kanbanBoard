@@ -6,6 +6,7 @@ import {
 import {
   CreateBoardDto,
   CreateCardDto,
+  UpdateBoardDto,
   UpdateCardDto,
   UpdateCardPositionDto,
 } from '../dto/index.dto';
@@ -25,7 +26,19 @@ export class BoardService {
   async createBoard(data: CreateBoardDto): Promise<Board> {
     return this.boardRepository.createBoard(data);
   }
-
+  async updateBoard(
+    uniqueHashedId: string,
+    data: UpdateBoardDto,
+  ): Promise<Board> {
+    try {
+      return this.boardRepository.updateBoard(uniqueHashedId, data);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
+  }
   async getBoardWithCards(
     uniqueHashedId: string,
   ): Promise<Board & { cards: Card[] }> {
@@ -33,7 +46,7 @@ export class BoardService {
 
     if (!board) {
       throw new NotFoundException(
-        `Дошка з ID "${uniqueHashedId}" не знаwqдена.`,
+        `Board with ID "${uniqueHashedId}" not found.`,
       );
     }
     return board;
@@ -44,7 +57,7 @@ export class BoardService {
 
     if (!board) {
       throw new NotFoundException(
-        `Дошка з ID "${uniqueHashedId}" не знайдена.`,
+        `Board with ID "${uniqueHashedId}" not found.`,
       );
     }
 
@@ -56,7 +69,7 @@ export class BoardService {
 
     if (!board) {
       throw new NotFoundException(
-        `Дошка з ID "${uniqueHashedId}" не знайдена.`,
+        `Board with ID "${uniqueHashedId}" not found.`,
       );
     }
 
@@ -92,14 +105,14 @@ export class BoardService {
     const board = await this.boardRepository.findByUniqueId(uniqueHashedId);
     if (!board) {
       throw new NotFoundException(
-        `Дошка з ID "${uniqueHashedId}" не знайдена.`,
+        `Board with ID "${uniqueHashedId}" not found.`,
       );
     }
 
     const card = await this.cardRepository.findCardById(dto.cardId);
     if (!card || card.boardId !== board.id) {
       throw new NotFoundException(
-        `Картка не знайдена або не належить дошці ${uniqueHashedId}.`,
+        `Card not found or does not belong to board ${uniqueHashedId}.`,
       );
     }
 
@@ -114,9 +127,9 @@ export class BoardService {
       );
       return updatedCard;
     } catch (error) {
-      console.error('Помилка транзакції переміщення картки:', error);
+      console.error('Card movement transaction error:', error);
       throw new InternalServerErrorException(
-        'Помилка при переміщенні картки. Спробуйте пізніше.',
+        'Error moving card. Please try again later.',
       );
     }
   }

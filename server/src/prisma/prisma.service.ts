@@ -12,11 +12,11 @@ export class PrismaService
 
   async onModuleInit() {
     await this.$connect();
-    console.log('PrismaService: Підключено до бази даних.');
+    console.log('PrismaService: Connected to the database.');
   }
 
   async onModuleDestroy() {
     await this.$disconnect();
-    console.log('PrismaService: Відключено від бази даних.');
+    console.log('PrismaService: Disconnected from the database.');
   }
 }

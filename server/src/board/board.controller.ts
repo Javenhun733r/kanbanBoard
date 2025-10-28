@@ -12,6 +12,7 @@ import {
 import {
   CreateBoardDto,
   CreateCardDto,
+  UpdateBoardDto,
   UpdateCardDto,
   UpdateCardPositionDto,
 } from '../dto/index.dto';
@@ -40,7 +41,17 @@ export class BoardController {
       await this.boardService.getBoardWithCards(uniqueHashedId);
     return BoardMapper.toBoardResponseDto(boardWithCards);
   }
-
+  @Put(':uniqueHashedId')
+  async updateBoard(
+    @Param('uniqueHashedId') uniqueHashedId: string,
+    @Body() updateBoardDto: UpdateBoardDto,
+  ): Promise<BoardResponseDto> {
+    const updatedBoard = await this.boardService.updateBoard(
+      uniqueHashedId,
+      updateBoardDto,
+    );
+    return BoardMapper.toBoardResponseDto({ ...updatedBoard, cards: [] });
+  }
   @Delete(':uniqueHashedId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBoard(

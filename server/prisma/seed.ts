@@ -3,11 +3,11 @@ import { ColumnStatus, PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log(`Початок сідінгу...`);
+  console.log(`Start seeding...`);
 
   await prisma.card.deleteMany();
   await prisma.board.deleteMany();
-  console.log('Існуючі дані очищено.');
+  console.log('Existing data cleared.');
 
   const devBoard = await prisma.board.create({
     data: {
@@ -18,54 +18,54 @@ async function main() {
 
   const marketingBoard = await prisma.board.create({
     data: {
-      uniqueHashedId: 'MARKETING-007',
+      uniqueHashedId: 'TEST-002',
       name: 'Marketing Campaign Launch',
     },
   });
 
   const hrBoard = await prisma.board.create({
     data: {
-      uniqueHashedId: 'HR-011',
+      uniqueHashedId: 'TEST-003',
       name: 'Q4 Recruiting Pipeline',
     },
   });
 
-  console.log(`Створено 3 заповнені тестові дошки.`);
+  console.log(`Created 3 populated test boards.`);
 
   await prisma.card.createMany({
     data: [
       {
         boardId: devBoard.id,
-        title: 'Налаштування інфраструктури',
-        description: 'Вирішення конфліктів залежностей Vite/NestJS.',
+        title: 'Infrastructure Setup',
+        description: 'Resolve dependency conflicts between Vite and NestJS.',
         column: ColumnStatus.ToDo,
         orderIndex: 0,
       },
       {
         boardId: devBoard.id,
-        title: 'Реалізація логіки D&D',
-        description: 'Обчислення нових orderIndex.',
+        title: 'Implement D&D Logic',
+        description: 'Calculate and update new orderIndex values.',
         column: ColumnStatus.ToDo,
         orderIndex: 1,
       },
       {
         boardId: devBoard.id,
-        title: 'Реалізація API (CRUD/D&D)',
-        description: 'Вся логіка Controller/Service/Repository готова.',
+        title: 'Implement API (CRUD/D&D)',
+        description: 'All Controller/Service/Repository logic completed.',
         column: ColumnStatus.InProgress,
         orderIndex: 0,
       },
       {
         boardId: devBoard.id,
-        title: 'Підключення Redux RTK Query',
-        description: 'Налаштування API slice та store.',
+        title: 'Integrate Redux RTK Query',
+        description: 'Configure API slice and store.',
         column: ColumnStatus.InProgress,
         orderIndex: 1,
       },
       {
         boardId: devBoard.id,
-        title: 'Фіналізація архітектури',
-        description: 'Ізоляція сервісного шару від типів Prisma.',
+        title: 'Finalize Architecture',
+        description: 'Isolate the service layer from Prisma types.',
         column: ColumnStatus.Done,
         orderIndex: 0,
       },
@@ -75,22 +75,22 @@ async function main() {
     data: [
       {
         boardId: marketingBoard.id,
-        title: 'Створити A/B тести для лендингу',
-        description: 'Розробити два варіанти заголовка та CTA.',
+        title: 'Create A/B tests for landing page',
+        description: 'Develop two variations for the headline and CTA.',
         column: ColumnStatus.ToDo,
         orderIndex: 0,
       },
       {
         boardId: marketingBoard.id,
-        title: 'Написати 10 ідей для блогу',
-        description: 'Потрібні ідеї з SEO-оптимізацією.',
+        title: 'Write 10 blog post ideas',
+        description: 'Need ideas with SEO optimization focus.',
         column: ColumnStatus.InProgress,
         orderIndex: 0,
       },
       {
         boardId: marketingBoard.id,
-        title: 'Запуск рекламної кампанії в Google Ads',
-        description: 'Бюджет 5000 грн, націлення на ЦА.',
+        title: 'Launch Google Ads campaign',
+        description: 'Budget $5000, targeting the core audience.',
         column: ColumnStatus.Done,
         orderIndex: 0,
       },
@@ -100,29 +100,29 @@ async function main() {
     data: [
       {
         boardId: hrBoard.id,
-        title: 'Опублікувати вакансію Middle React',
-        description: 'Розмістити на Djinni та LinkedIn.',
+        title: 'Post Middle React vacancy',
+        description: 'Publish job opening on Djinni and LinkedIn.',
         column: ColumnStatus.ToDo,
         orderIndex: 0,
       },
       {
         boardId: hrBoard.id,
-        title: 'Переглянути резюме кандидатів',
-        description: 'Сьогодні заплановано 15 резюме.',
+        title: 'Review candidate resumes',
+        description: '15 resumes scheduled for today.',
         column: ColumnStatus.InProgress,
         orderIndex: 0,
       },
       {
         boardId: hrBoard.id,
-        title: 'Фінальне інтерв’ю Senior Backend',
-        description: 'Заплановано на 16:00.',
+        title: 'Final interview Senior Backend',
+        description: 'Scheduled for 4:00 PM.',
         column: ColumnStatus.Done,
         orderIndex: 0,
       },
     ],
   });
 
-  console.log('Сідінг завершено.');
+  console.log('Seeding finished.');
 }
 
 main()

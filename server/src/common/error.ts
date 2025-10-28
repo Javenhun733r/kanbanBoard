@@ -5,7 +5,7 @@ export class UniqueConstraintError extends Error {
   }
 }
 export class NotFoundError extends Error {
-  constructor(message: string = 'Запис не знайдено.') {
+  constructor(message: string = 'Record not found.') {
     super(message);
     this.name = 'NotFoundError';
   }

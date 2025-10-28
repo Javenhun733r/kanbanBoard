@@ -1,15 +1,16 @@
 import { IsOptional, IsString, MaxLength } from 'class-validator';
+
 export class UpdateCardDto {
-  @IsString({ message: 'Заголовок картки має бути рядком.' })
+  @IsString({ message: 'Card title must be a string.' })
   @IsOptional()
   @MaxLength(255)
   title?: string;
 
-  @IsString({ message: 'Опис картки має бути рядком.' })
+  @IsString({ message: 'Card description must be a string.' })
   @IsOptional()
   description?: string;
 
-  @IsString({ message: 'Колонка має бути рядком.' })
+  @IsString({ message: 'Column must be a string.' })
   @IsOptional()
   column?: 'ToDo' | 'InProgress' | 'Done';
 }

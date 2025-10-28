@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { NotFoundError, UniqueConstraintError } from '../../common/error';
-import { CreateBoardDto } from '../../dto/boardDTO/create-board.dto';
+import {
+  CreateBoardDto,
+  UpdateBoardDto,
+} from '../../dto/boardDTO/create-board.dto';
 import { Board, Card } from '../../entities/board.entity';
 import { PrismaEntityMapper } from '../../mappers/prisma-entity.mapper';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -20,13 +23,33 @@ export class BoardRepository {
         error.code === 'P2002'
       ) {
         throw new UniqueConstraintError(
-          `Дошка з ID "${data.uniqueHashedId}" вже існує.`,
+          `Board with ID "${data.uniqueHashedId}" already exists.`,
         );
       }
       throw error;
     }
   }
+  async updateBoard(
+    uniqueHashedId: string,
+    data: UpdateBoardDto,
+  ): Promise<Board> {
+    try {
+      const prismaResult = await this.prisma.board.update({
+        where: { uniqueHashedId },
+        data,
+      });
 
+      return PrismaEntityMapper.toBoardEntity(prismaResult);
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundError(`Board with ID "${uniqueHashedId}" not found.`);
+      }
+      throw error;
+    }
+  }
   async findByUniqueId(
     uniqueHashedId: string,
   ): Promise<(Board & { cards: Card[] }) | null> {
@@ -49,15 +72,21 @@ export class BoardRepository {
     };
   }
 
-  async deleteBoard(boardId: string): Promise<void> {
+  async deleteBoard(id: string): Promise<void> {
     try {
-      await this.prisma.board.delete({ where: { id: boardId } });
+      await this.prisma.$transaction(async (prisma) => {
+        await prisma.card.deleteMany({
+          where: { boardId: id },
+        });
+
+        await prisma.board.delete({ where: { id } });
+      });
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2025'
       ) {
-        throw new NotFoundError('Такої дошки не існує');
+        throw new NotFoundError('The requested board does not exist');
       }
       throw error;
     }

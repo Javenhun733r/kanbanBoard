@@ -58,9 +58,7 @@ export class CardRepository {
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2025'
       ) {
-        throw new NotFoundError(
-          `Картка з ID ${cardId} не знайдена для оновлення.`,
-        );
+        throw new NotFoundError(`Card with ID ${cardId} not found for update.`);
       }
       throw error;
     }
@@ -75,7 +73,7 @@ export class CardRepository {
         error.code === 'P2025'
       ) {
         throw new NotFoundError(
-          `Картка з ID ${cardId} не знайдена для видалення.`,
+          `Card with ID ${cardId} not found for deletion.`,
         );
       }
       throw error;

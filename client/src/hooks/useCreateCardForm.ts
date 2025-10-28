@@ -5,19 +5,24 @@ import type { ColumnStatus } from '../entities/board.entity';
 const INITIAL_STATE = {
 	title: '',
 	description: '',
-	column: 'ToDo' as ColumnStatus,
+	column: '' as ColumnStatus,
 };
 
 interface CreateCardFormOptions {
 	uniqueHashedId: string;
 	onSuccess: () => void;
+	initialColumn: ColumnStatus;
 }
 
 export const useCreateCardForm = ({
 	uniqueHashedId,
 	onSuccess,
+	initialColumn,
 }: CreateCardFormOptions) => {
-	const [formData, setFormData] = useState(INITIAL_STATE);
+	const [formData, setFormData] = useState(() => ({
+		...INITIAL_STATE,
+		column: initialColumn,
+	}));
 	const [isFormVisible, setIsFormVisible] = useState(false);
 	const [createCard, { isLoading, error }] = useCreateCardMutation();
 
@@ -48,7 +53,7 @@ export const useCreateCardForm = ({
 			setIsFormVisible(false);
 			onSuccess();
 		} catch (err) {
-			console.error('Помилка створення картки:', err);
+			console.error('Error creating card:', err);
 		}
 	};
 
@@ -60,7 +65,7 @@ export const useCreateCardForm = ({
 		setIsFormVisible,
 		handleInputChange,
 		handleSubmit,
-		// Додаємо метод для зміни колонки
+
 		setColumn: (col: ColumnStatus) =>
 			setFormData(prev => ({ ...prev, column: col })),
 	};

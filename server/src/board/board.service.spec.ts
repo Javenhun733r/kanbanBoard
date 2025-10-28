@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UniqueConstraintError } from '../common/error';
+import { NotFoundError, UniqueConstraintError } from '../common/error';
 import { Board, Card, ColumnStatus } from '../entities/board.entity';
 import { BoardService } from './board.service';
 import { BoardRepository } from './repository/board.repository';
@@ -10,6 +10,7 @@ const mockBoardRepository = {
   createBoard: jest.fn(),
   findByUniqueId: jest.fn(),
   deleteBoard: jest.fn(),
+  updateBoard: jest.fn(),
 } as unknown as jest.Mocked<BoardRepository>;
 
 const mockCardRepository = {
@@ -79,12 +80,38 @@ describe('BoardsService', () => {
       service.createBoard({ name: 'Test', uniqueHashedId: 'EXIST' }),
     ).rejects.toThrow(UniqueConstraintError);
   });
-
   it('should throw NotFoundException if board not found', async () => {
     mockBoardRepository.findByUniqueId.mockResolvedValue(null);
 
     await expect(service.getBoardWithCards('NON-EXIST')).rejects.toThrow(
       NotFoundException,
+    );
+  });
+  it('should successfully update board name', async () => {
+    const updatedBoard = { ...mockBoardFound, name: 'New Name' };
+    mockBoardRepository.updateBoard.mockResolvedValue(updatedBoard);
+
+    const result = await service.updateBoard('TEST-001', { name: 'New Name' });
+
+    expect(result.name).toEqual('New Name');
+    expect(mockBoardRepository.updateBoard).toHaveBeenCalledWith('TEST-001', {
+      name: 'New Name',
+    });
+  });
+
+  it('should throw NotFoundException when updating non-existent board', async () => {
+    mockBoardRepository.updateBoard.mockRejectedValue(
+      new NotFoundError('Board not found'),
+    );
+
+    const updateDto = { name: 'New Name' };
+
+    await expect(service.updateBoard('NON-EXIST', updateDto)).rejects.toThrow(
+      NotFoundError,
+    );
+    expect(mockBoardRepository.updateBoard).toHaveBeenCalledWith(
+      'NON-EXIST',
+      updateDto,
     );
   });
   it('should successfully delete a board', async () => {

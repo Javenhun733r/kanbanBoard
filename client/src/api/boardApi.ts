@@ -6,6 +6,7 @@ import {
 	createCardUrl,
 	deleteCardUrl,
 	getBoardUrl,
+	updateBoardUrl,
 	updateCardPositionUrl,
 	updateCardUrl,
 } from '../config/api.config';
@@ -16,6 +17,10 @@ interface UpdatePositionPayload {
 	cardId: string;
 	newColumn: ColumnStatus;
 	newOrderIndex: number;
+}
+interface UpdateBoardPayload {
+	uniqueHashedId: string;
+	payload: { name: string };
 }
 interface CreateBoardPayload {
 	name: string;
@@ -34,11 +39,20 @@ export const boardsApi = createApi({
 	endpoints: builder => ({
 		getBoard: builder.query<BoardResponseDto, string>({
 			query: uniqueHashedId => getBoardUrl(uniqueHashedId),
-			providesTags: (result, error, uniqueHashedId) => [
+			providesTags: (_, __, uniqueHashedId) => [
 				{ type: BOARDS_API_TAG, id: uniqueHashedId },
 			],
 		}),
-
+		updateBoard: builder.mutation<BoardResponseDto, UpdateBoardPayload>({
+			query: ({ uniqueHashedId, payload }) => ({
+				url: updateBoardUrl(uniqueHashedId),
+				method: 'PUT',
+				body: payload,
+			}),
+			invalidatesTags: (_, __, { uniqueHashedId }) => [
+				{ type: BOARDS_API_TAG, id: uniqueHashedId },
+			],
+		}),
 		createBoard: builder.mutation<BoardResponseDto, CreateBoardPayload>({
 			query: payload => ({
 				url: createBoardUrl,
@@ -57,7 +71,7 @@ export const boardsApi = createApi({
 				method: 'POST',
 				body: payload,
 			}),
-			invalidatesTags: (result, error, { uniqueHashedId }) => [
+			invalidatesTags: (_, __, { uniqueHashedId }) => [
 				{ type: BOARDS_API_TAG, id: uniqueHashedId },
 			],
 		}),
@@ -81,7 +95,7 @@ export const boardsApi = createApi({
 				url: deleteCardUrl(cardId),
 				method: 'DELETE',
 			}),
-			invalidatesTags: (result, error, { uniqueHashedId }) => [
+			invalidatesTags: (_, __, { uniqueHashedId }) => [
 				{ type: BOARDS_API_TAG, id: uniqueHashedId },
 			],
 		}),
@@ -95,7 +109,7 @@ export const boardsApi = createApi({
 				method: 'PUT',
 				body: payload,
 			}),
-			invalidatesTags: (result, error, { uniqueHashedId }) => [
+			invalidatesTags: (_, __, { uniqueHashedId }) => [
 				{ type: BOARDS_API_TAG, id: uniqueHashedId },
 			],
 		}),
@@ -105,7 +119,9 @@ export const boardsApi = createApi({
 				url: getBoardUrl(uniqueHashedId),
 				method: 'DELETE',
 			}),
-			invalidatesTags: [BOARDS_API_TAG],
+			invalidatesTags: (_, __, uniqueHashedId) => [
+				{ type: BOARDS_API_TAG, id: uniqueHashedId },
+			],
 		}),
 	}),
 });
@@ -117,5 +133,6 @@ export const {
 	useUpdateCardMutation,
 	useDeleteCardMutation,
 	useDeleteBoardMutation,
+	useUpdateBoardMutation,
 	useUpdateCardPositionMutation,
 } = boardsApi;

@@ -6,6 +6,7 @@ export class CardResponseDto {
   description: string;
   column: ColumnStatus;
   orderIndex: number;
+  updatedAt: Date;
 }
 
 export class BoardResponseDto {

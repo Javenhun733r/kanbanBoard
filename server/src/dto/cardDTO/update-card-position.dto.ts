@@ -1,14 +1,15 @@
 import { Type } from 'class-transformer';
 import { IsInt, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+
 export class UpdateCardPositionDto {
-  @IsUUID('4', { message: 'ID картки має бути дійсним UUID.' })
+  @IsUUID('4', { message: 'Card ID must be a valid UUID.' })
   cardId: string;
 
-  @IsString({ message: 'Нова колонка має бути рядком.' })
-  @IsNotEmpty({ message: 'Потрібно вказати нову колонку.' })
+  @IsString({ message: 'New column must be a string.' })
+  @IsNotEmpty({ message: 'New column must be specified.' })
   newColumn: 'ToDo' | 'InProgress' | 'Done';
 
-  @IsInt({ message: 'Новий індекс позиції має бути цілим числом.' })
+  @IsInt({ message: 'New position index must be an integer.' })
   @Type(() => Number)
   newOrderIndex: number;
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import type { ColumnStatus } from '../../entities/board.entity';
 import { useCreateCardForm } from '../../hooks/useCreateCardForm';
+import Button from '../ui/button/Button';
 
 interface AddCardFormProps {
 	boardId: string;
@@ -15,15 +16,11 @@ const AddCardForm: React.FC<AddCardFormProps> = ({ boardId, columnStatus }) => {
 		setIsFormVisible,
 		handleInputChange,
 		handleSubmit,
-		setColumn,
 	} = useCreateCardForm({
 		uniqueHashedId: boardId,
 		onSuccess: () => console.log('Card created!'),
+		initialColumn: columnStatus,
 	});
-
-	React.useEffect(() => {
-		setColumn(columnStatus);
-	}, []);
 
 	const renderForm = (
 		<form
@@ -35,7 +32,7 @@ const AddCardForm: React.FC<AddCardFormProps> = ({ boardId, columnStatus }) => {
 				value={formData.title}
 				onChange={handleInputChange}
 				className='w-full p-2 mb-2 border rounded text-sm'
-				placeholder='Заголовок картки'
+				placeholder='Card header'
 				required
 			/>
 			<textarea
@@ -43,34 +40,24 @@ const AddCardForm: React.FC<AddCardFormProps> = ({ boardId, columnStatus }) => {
 				value={formData.description}
 				onChange={handleInputChange}
 				className='w-full p-2 mb-2 border rounded text-sm resize-none'
-				placeholder='Опис'
+				placeholder='Description'
 				rows={3}
 				required
 			/>
 
 			<div className='flex justify-between items-center'>
-				<button
-					type='submit'
-					className={`
-                        px-3 py-1 rounded text-white text-sm font-semibold 
-                        ${
-													isLoading
-														? 'bg-gray-400'
-														: 'bg-indigo-600 hover:bg-indigo-700'
-												}
-                        transition
-                    `}
-					disabled={isLoading}
-				>
-					{isLoading ? 'Створення...' : 'Додати картку'}
-				</button>
-				<button
+				<Button type='submit' variant='submit' isLoading={isLoading}>
+					{isLoading ? 'Creating...' : 'Add card'}
+				</Button>
+
+				<Button
 					type='button'
+					variant='ghost'
 					onClick={() => setIsFormVisible(false)}
-					className='text-gray-500 text-sm hover:text-gray-700'
+					className='px-0! py-0! text-sm! font-normal!'
 				>
-					Скасувати
-				</button>
+					Cancel
+				</Button>
 			</div>
 		</form>
 	);
@@ -80,12 +67,13 @@ const AddCardForm: React.FC<AddCardFormProps> = ({ boardId, columnStatus }) => {
 			{isFormVisible ? (
 				renderForm
 			) : (
-				<button
+				<Button
 					onClick={() => setIsFormVisible(true)}
-					className='w-full p-2 rounded-lg text-sm font-medium text-gray-500 bg-gray-200 hover:bg-gray-300 transition'
+					variant='secondary'
+					className='w-full p-2'
 				>
-					+ Додати нову картку
-				</button>
+					+ Add new card
+				</Button>
 			)}
 		</div>
 	);
