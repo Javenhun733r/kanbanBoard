@@ -8,7 +8,6 @@ export const useBoardApp = () => {
 	const resetBoardQueryCache = useCallback((id: string) => {
 		store.dispatch(boardsApi.util.invalidateTags([{ type: 'Board', id: id }]));
 	}, []);
-	const [boardKey, setBoardKey] = useState(0);
 
 	const { data, error, isLoading, isFetching } = useGetBoardQuery(
 		loadedBoardId,
@@ -20,7 +19,6 @@ export const useBoardApp = () => {
 		}
 	);
 	const resetIdsAndExitCreate = useCallback(() => {
-		setBoardKey(prev => prev + 1);
 		setIsCreatingBoard(false);
 		setInputBoardId('');
 		setLoadedBoardId('');
@@ -50,10 +48,11 @@ export const useBoardApp = () => {
 		[setInputBoardId, setLoadedBoardId, setIsCreatingBoard]
 	);
 	const handleBoardDeletedSuccess = useCallback(() => {
+		const deletedId = loadedBoardId;
 		setInputBoardId('');
-		setLoadedBoardId('');
+		setLoadedBoardId(`${deletedId}`);
 		setIsCreatingBoard(false);
-	}, [setIsCreatingBoard, setInputBoardId, setLoadedBoardId]);
+	}, [loadedBoardId]);
 	const isError = !!error;
 	const isInitialLoading = isLoading || isFetching;
 
@@ -62,7 +61,6 @@ export const useBoardApp = () => {
 		error,
 		isCreatingBoard,
 		isError,
-		boardKey,
 		isInitialLoading,
 		setInputBoardId,
 		setLoadedBoardId,

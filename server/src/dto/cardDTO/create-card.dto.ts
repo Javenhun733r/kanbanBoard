@@ -1,3 +1,4 @@
+import { PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateCardDto {
@@ -14,3 +15,4 @@ export class CreateCardDto {
   @IsNotEmpty({ message: 'Column must be specified.' })
   column: 'ToDo' | 'InProgress' | 'Done';
 }
+export class UpdateCardDto extends PartialType(CreateCardDto) {}

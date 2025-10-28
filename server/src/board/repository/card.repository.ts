@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, ColumnStatus as PrismaColumnStatus } from '@prisma/client';
 import { NotFoundError } from '../../common/error';
-import { CreateCardDto } from '../../dto/cardDTO/create-card.dto';
-import { UpdateCardDto } from '../../dto/cardDTO/update-card.dto';
+import {
+  CreateCardDto,
+  UpdateCardDto,
+} from '../../dto/cardDTO/create-card.dto';
 import { Card, ColumnStatus } from '../../entities/board.entity';
 import { PrismaEntityMapper } from '../../mappers/prisma-entity.mapper';
 import { PrismaService } from '../../prisma/prisma.service';

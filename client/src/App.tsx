@@ -17,7 +17,6 @@ function App() {
 		headerProps,
 		resetIdsAndExitCreate,
 		handleBoardCreated,
-		boardKey,
 	} = useBoardApp();
 
 	const handleCancelCreate = () => {
@@ -78,7 +77,7 @@ function App() {
 	return (
 		<div className='min-h-screen bg-gray-100 pt-[150px]'>
 			{headerComponent}
-			<Board key={boardKey} boardData={data} />
+			<Board boardData={data} />
 			<Toaster />
 		</div>
 	);
