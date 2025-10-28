@@ -1,19 +1,38 @@
-steps:
-  - name: Checkout Code
-    uses: actions/checkout@v4
+name: Frontend Build & Lint
 
-  - name: Setup Node.js 20.x
-    uses: actions/setup-node@v4
-    with:
-      node-version: 20.x
-      cache: 'npm'
-      cache-dependency-path: client/package-lock.json
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'client/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'client/**'
 
-  - name: Install Dependencies
-    run: npm ci
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client
 
-  - name: Run ESLint Check
-    run: npm run lint
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-  - name: Run Vite Build Check
-    run: npm run build
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run ESLint Check
+        run: npm run lint
+
+      - name: Run Vite Build Check
+        run: npm run build
