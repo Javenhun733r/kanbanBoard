@@ -4,7 +4,14 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log(`Start seeding...`);
-
+  const existingBoards = await prisma.board.count();
+  if (existingBoards > 0) {
+    console.log(
+      `Database already contains ${existingBoards} boards. Skipping seeding.`,
+    );
+    return;
+  }
+  console.log('Database is empty. Proceeding with initial data creation.');
   await prisma.card.deleteMany();
   await prisma.board.deleteMany();
   console.log('Existing data cleared.');

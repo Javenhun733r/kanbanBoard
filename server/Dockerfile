@@ -6,7 +6,6 @@ COPY package.json package-lock.json ./
 RUN npm install
 
 COPY . .
-COPY .env .env
 RUN rm -f prisma.config.ts || true
 RUN npm run prisma:gen
 RUN npm run build
@@ -22,12 +21,11 @@ COPY tsconfig.json .
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY prisma ./prisma
-COPY .env .env
 ENV NODE_ENV production
 ENV PORT 3000
 
 ENTRYPOINT ["/bin/sh", "-c"]
 
-CMD ["npx prisma db push --accept-data-loss && npx ts-node --project tsconfig.json prisma/seed.ts && node dist/src/main.js"]
+CMD ["npx prisma migrate deploy && npx ts-node --project tsconfig.json prisma/seed.ts && node dist/src/main.js"]
 
 EXPOSE 3000
