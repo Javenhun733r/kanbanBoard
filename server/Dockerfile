@@ -24,8 +24,6 @@ COPY prisma ./prisma
 ENV NODE_ENV production
 ENV PORT 3000
 
-ENTRYPOINT ["/bin/sh", "-c"]
-
-CMD ["npx prisma migrate deploy && npx ts-node --project tsconfig.json prisma/seed.ts && node dist/src/main.js"]
+ENTRYPOINT ["/bin/sh", "-c", "npx prisma migrate deploy && npx ts-node --project tsconfig.json prisma/seed.ts && node dist/src/main.js"]
 
 EXPOSE 3000
