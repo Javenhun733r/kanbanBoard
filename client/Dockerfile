@@ -25,4 +25,4 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 8080
 
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/bin/sh", "-c", "envsubst '$VITE_SERVER_URL' < /etc/nginx/conf.d/default.conf > /etc/nginx/conf.d/default.conf.temp && mv /etc/nginx/conf.d/default.conf.temp /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
