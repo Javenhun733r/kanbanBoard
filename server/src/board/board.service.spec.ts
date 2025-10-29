@@ -1,6 +1,5 @@
-import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundError, UniqueConstraintError } from '../common/error';
+import { NotFoundError, UniqueConstraintError } from '../common/errors/error';
 import { Board, Card, ColumnStatus } from '../entities/board.entity';
 import { BoardService } from './board.service';
 import { BoardRepository } from './repository/board.repository';
@@ -51,6 +50,7 @@ describe('BoardsService', () => {
     }).compile();
 
     service = module.get<BoardService>(BoardService);
+    mockBoardRepository.findByUniqueId.mockResolvedValue(mockBoardFound);
   });
 
   it('should successfully create a board', async () => {
@@ -80,13 +80,6 @@ describe('BoardsService', () => {
       service.createBoard({ name: 'Test', uniqueHashedId: 'EXIST' }),
     ).rejects.toThrow(UniqueConstraintError);
   });
-  it('should throw NotFoundException if board not found', async () => {
-    mockBoardRepository.findByUniqueId.mockResolvedValue(null);
-
-    await expect(service.getBoardWithCards('NON-EXIST')).rejects.toThrow(
-      NotFoundException,
-    );
-  });
   it('should successfully update board name', async () => {
     const updatedBoard = { ...mockBoardFound, name: 'New Name' };
     mockBoardRepository.updateBoard.mockResolvedValue(updatedBoard);
@@ -115,26 +108,16 @@ describe('BoardsService', () => {
     );
   });
   it('should successfully delete a board', async () => {
-    mockBoardRepository.findByUniqueId.mockResolvedValue(mockBoardFound);
     mockBoardRepository.deleteBoard.mockResolvedValue(undefined);
 
-    await expect(service.deleteBoard('TEST-001')).resolves.toBeUndefined();
+    await expect(service.deleteBoard(mockBoardFound)).resolves.toBeUndefined();
     expect(mockBoardRepository.deleteBoard).toHaveBeenCalledWith('uuid-1');
   });
 
-  it('should throw NotFoundException on delete if board not found', async () => {
-    mockBoardRepository.findByUniqueId.mockResolvedValue(null);
-
-    await expect(service.deleteBoard('NON-EXIST')).rejects.toThrow(
-      NotFoundException,
-    );
-    expect(mockBoardRepository.deleteBoard).not.toHaveBeenCalled();
-  });
   it('should successfully create a card', async () => {
-    mockBoardRepository.findByUniqueId.mockResolvedValue(mockBoardFound);
     mockCardRepository.createCard.mockResolvedValue(mockCardFound);
 
-    const result = await service.createCard('TEST-001', {
+    const result = await service.createCard(mockBoardFound, {
       title: 'New Task',
       description: 'Desc',
       column: 'ToDo',
@@ -147,20 +130,7 @@ describe('BoardsService', () => {
     );
   });
 
-  it('should throw NotFoundException on createCard if board not found', async () => {
-    mockBoardRepository.findByUniqueId.mockResolvedValue(null);
-
-    await expect(
-      service.createCard('NON-EXIST', {
-        title: 'Task',
-        description: 'Desc',
-        column: 'ToDo',
-      }),
-    ).rejects.toThrow(NotFoundException);
-    expect(mockCardRepository.createCard).not.toHaveBeenCalled();
-  });
   it('should successfully update card position', async () => {
-    mockBoardRepository.findByUniqueId.mockResolvedValue(mockBoardFound);
     mockCardRepository.findCardById.mockResolvedValue(mockCardFound);
     mockCardRepository.updateCardPosition.mockResolvedValue({
       ...mockCardFound,
@@ -173,28 +143,9 @@ describe('BoardsService', () => {
       newColumn: ColumnStatus.InProgress,
       newOrderIndex: 5,
     };
-
-    const result = await service.updateCardPosition('TEST-001', dto);
+    const result = await service.updateCardPosition(mockBoardFound, dto);
 
     expect(result.column).toEqual('InProgress');
     expect(mockCardRepository.updateCardPosition).toHaveBeenCalled();
-  });
-
-  it('should throw NotFoundException on updateCardPosition if card is not on board', async () => {
-    mockBoardRepository.findByUniqueId.mockResolvedValue(mockBoardFound);
-    mockCardRepository.findCardById.mockResolvedValue({
-      ...mockCardFound,
-      boardId: 'another-uuid',
-    });
-
-    const dto = {
-      cardId: 'card-1',
-      newColumn: ColumnStatus.InProgress,
-      newOrderIndex: 5,
-    };
-
-    await expect(service.updateCardPosition('TEST-001', dto)).rejects.toThrow(
-      NotFoundException,
-    );
   });
 });

@@ -12,9 +12,10 @@ import {
 } from '../dto/index.dto';
 import { Board, Card, ColumnStatus } from '../entities/board.entity';
 
-import { NotFoundError } from '../common/error';
 import { BoardRepository } from './repository/board.repository';
 import { CardRepository } from './repository/card.repository';
+
+type BoardWithCards = Board & { cards: Card[] };
 
 @Injectable()
 export class BoardService {
@@ -26,22 +27,15 @@ export class BoardService {
   async createBoard(data: CreateBoardDto): Promise<Board> {
     return this.boardRepository.createBoard(data);
   }
+
   async updateBoard(
     uniqueHashedId: string,
     data: UpdateBoardDto,
   ): Promise<Board> {
-    try {
-      return this.boardRepository.updateBoard(uniqueHashedId, data);
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        throw new NotFoundException(error.message);
-      }
-      throw error;
-    }
+    return this.boardRepository.updateBoard(uniqueHashedId, data);
   }
-  async getBoardWithCards(
-    uniqueHashedId: string,
-  ): Promise<Board & { cards: Card[] }> {
+
+  async getBoardWithCards(uniqueHashedId: string): Promise<BoardWithCards> {
     const board = await this.boardRepository.findByUniqueId(uniqueHashedId);
 
     if (!board) {
@@ -49,70 +43,25 @@ export class BoardService {
         `Board with ID "${uniqueHashedId}" not found.`,
       );
     }
-    return board;
+    return board as BoardWithCards;
   }
 
-  async deleteBoard(uniqueHashedId: string): Promise<void> {
-    const board = await this.boardRepository.findByUniqueId(uniqueHashedId);
-
-    if (!board) {
-      throw new NotFoundException(
-        `Board with ID "${uniqueHashedId}" not found.`,
-      );
-    }
-
+  async deleteBoard(board: Board): Promise<void> {
     await this.boardRepository.deleteBoard(board.id);
   }
 
-  async createCard(uniqueHashedId: string, data: CreateCardDto): Promise<Card> {
-    const board = await this.boardRepository.findByUniqueId(uniqueHashedId);
-
-    if (!board) {
-      throw new NotFoundException(
-        `Board with ID "${uniqueHashedId}" not found.`,
-      );
-    }
-
+  async createCard(board: Board, data: CreateCardDto): Promise<Card> {
     return this.cardRepository.createCard(board.id, data);
   }
 
-  async updateCard(cardId: string, data: UpdateCardDto): Promise<Card> {
-    try {
-      return this.cardRepository.updateCard(cardId, data);
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        throw new NotFoundException(error.message);
-      }
-      throw error;
-    }
-  }
-
-  async deleteCard(cardId: string): Promise<void> {
-    try {
-      await this.cardRepository.deleteCard(cardId);
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        throw new NotFoundException(error.message);
-      }
-      throw error;
-    }
-  }
-
   async updateCardPosition(
-    uniqueHashedId: string,
+    board: Board,
     dto: UpdateCardPositionDto,
   ): Promise<Card> {
-    const board = await this.boardRepository.findByUniqueId(uniqueHashedId);
-    if (!board) {
-      throw new NotFoundException(
-        `Board with ID "${uniqueHashedId}" not found.`,
-      );
-    }
-
     const card = await this.cardRepository.findCardById(dto.cardId);
     if (!card || card.boardId !== board.id) {
       throw new NotFoundException(
-        `Card not found or does not belong to board ${uniqueHashedId}.`,
+        `Card not found or does not belong to board ${board.uniqueHashedId}.`,
       );
     }
 
@@ -132,5 +81,12 @@ export class BoardService {
         'Error moving card. Please try again later.',
       );
     }
+  }
+
+  async updateCard(cardId: string, data: UpdateCardDto): Promise<Card> {
+    return this.cardRepository.updateCard(cardId, data);
+  }
+  async deleteCard(cardId: string): Promise<void> {
+    await this.cardRepository.deleteCard(cardId);
   }
 }

@@ -22,7 +22,7 @@ services:
       context: ./server
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?schema=public
+      DATABASE_URL: ${DATABASE_URL}
     depends_on:
       db:
         condition: service_healthy
@@ -37,8 +37,7 @@ services:
       context: ./client
       dockerfile: Dockerfile
     environment:
-      BACKEND_HOST: api
-      BACKEND_PORT: ${BACKEND_PORT}
+      VITE_SERVER_URL: ${VITE_SERVER_URL}
     ports:
       - "8080:8080"
     depends_on:

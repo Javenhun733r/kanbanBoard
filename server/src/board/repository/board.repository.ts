@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { NotFoundError, UniqueConstraintError } from '../../common/error';
+import {
+  NotFoundError,
+  UniqueConstraintError,
+} from '../../common/errors/error';
+import { PrismaEntityMapper } from '../../common/mappers/prisma-entity.mapper';
 import {
   CreateBoardDto,
   UpdateBoardDto,
 } from '../../dto/boardDTO/create-board.dto';
 import { Board, Card } from '../../entities/board.entity';
-import { PrismaEntityMapper } from '../../mappers/prisma-entity.mapper';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()

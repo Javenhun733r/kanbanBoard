@@ -1,28 +1,21 @@
 FROM node:20-alpine AS builder
 
-WORKDIR /app
+WORKDIR /app/client
 
-
-COPY package.json package-lock.json ./
+COPY package*.json ./
 RUN npm install
 
 COPY . .
-
-
 RUN npm run build
-
 
 FROM nginx:alpine AS final
 
-
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-
-RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-
 EXPOSE 8080
 
+RUN apk add --no-cache gettext
 
-CMD ["/bin/sh", "-c", "envsubst '$VITE_SERVER_URL' < /etc/nginx/conf.d/default.conf > /etc/nginx/conf.d/default.conf.temp && mv /etc/nginx/conf.d/default.conf.temp /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+COPY --from=builder /app/client/dist /usr/share/nginx/html
+
+COPY nginx.conf /etc/nginx/conf.d/nginx.conf.template
+
+ENTRYPOINT ["/bin/sh", "-c", "envsubst '$$VITE_SERVER_URL' < /etc/nginx/conf.d/nginx.conf.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]

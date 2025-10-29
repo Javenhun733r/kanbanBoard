@@ -1,5 +1,5 @@
 import { Board, Card } from '@prisma/client';
-import { BoardResponseDto, CardResponseDto } from '../dto/response.dto';
+import { BoardResponseDto, CardResponseDto } from '../../dto/response.dto';
 
 export class BoardMapper {
   private static groupCards(cards: Card[]): BoardResponseDto['columns'] {
