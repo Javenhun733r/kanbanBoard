@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundError, UniqueConstraintError } from '../common/errors/error';
+import { UpdateCardPositionDto } from '../dto/index.dto';
 import { Board, Card, ColumnStatus } from '../entities/board.entity';
 import { BoardService } from './board.service';
 import { BoardRepository } from './repository/board.repository';
@@ -19,7 +20,8 @@ const mockCardRepository = {
   updateCard: jest.fn(),
   deleteCard: jest.fn(),
 } as unknown as jest.Mocked<CardRepository>;
-const mockBoardFound: Board & { cards: [] } = {
+
+const mockBoardFound: Board & { cards: Card[] } = {
   id: 'uuid-1',
   uniqueHashedId: 'TEST-001',
   name: 'Test Board',
@@ -32,8 +34,11 @@ const mockCardFound = {
   id: 'card-1',
   boardId: 'uuid-1',
   title: 'Test Card',
+  description: '',
   column: ColumnStatus.ToDo,
   orderIndex: 0,
+  createdAt: new Date(),
+  updatedAt: new Date(),
 } as Card;
 
 describe('BoardsService', () => {
@@ -54,12 +59,13 @@ describe('BoardsService', () => {
   });
 
   it('should successfully create a board', async () => {
-    const mockBoard: Board = {
+    const mockBoard: Board & { cards: Card[] } = {
       id: 'uuid-1',
       uniqueHashedId: 'TEST-001',
       name: 'Test Board',
       createdAt: new Date(),
       updatedAt: new Date(),
+      cards: [],
     };
 
     mockBoardRepository.createBoard.mockResolvedValue(mockBoard);
@@ -80,6 +86,7 @@ describe('BoardsService', () => {
       service.createBoard({ name: 'Test', uniqueHashedId: 'EXIST' }),
     ).rejects.toThrow(UniqueConstraintError);
   });
+
   it('should successfully update board name', async () => {
     const updatedBoard = { ...mockBoardFound, name: 'New Name' };
     mockBoardRepository.updateBoard.mockResolvedValue(updatedBoard);
@@ -107,45 +114,71 @@ describe('BoardsService', () => {
       updateDto,
     );
   });
+
   it('should successfully delete a board', async () => {
     mockBoardRepository.deleteBoard.mockResolvedValue(undefined);
 
-    await expect(service.deleteBoard(mockBoardFound)).resolves.toBeUndefined();
+    await expect(
+      service.deleteBoard(mockBoardFound.uniqueHashedId),
+    ).resolves.toBeUndefined();
+
+    expect(mockBoardRepository.findByUniqueId).toHaveBeenCalledWith(
+      mockBoardFound.uniqueHashedId,
+    );
     expect(mockBoardRepository.deleteBoard).toHaveBeenCalledWith('uuid-1');
   });
 
   it('should successfully create a card', async () => {
     mockCardRepository.createCard.mockResolvedValue(mockCardFound);
 
-    const result = await service.createCard(mockBoardFound, {
+    const createCardDto = {
       title: 'New Task',
       description: 'Desc',
-      column: 'ToDo',
-    });
+      column: ColumnStatus.ToDo,
+    };
+
+    const result = await service.createCard(
+      mockBoardFound.uniqueHashedId,
+      createCardDto,
+    );
 
     expect(result.id).toEqual('card-1');
+    expect(mockBoardRepository.findByUniqueId).toHaveBeenCalledWith(
+      mockBoardFound.uniqueHashedId,
+    );
     expect(mockCardRepository.createCard).toHaveBeenCalledWith(
       'uuid-1',
-      expect.anything(),
+      createCardDto,
     );
   });
-
   it('should successfully update card position', async () => {
-    mockCardRepository.findCardById.mockResolvedValue(mockCardFound);
     mockCardRepository.updateCardPosition.mockResolvedValue({
       ...mockCardFound,
       column: ColumnStatus.InProgress,
       orderIndex: 5,
-    });
+    } as Card);
 
-    const dto = {
+    const dto: UpdateCardPositionDto = {
       cardId: 'card-1',
       newColumn: ColumnStatus.InProgress,
       newOrderIndex: 5,
     };
-    const result = await service.updateCardPosition(mockBoardFound, dto);
+    const result = await service.updateCardPosition(
+      mockBoardFound.uniqueHashedId,
+      dto,
+    );
 
-    expect(result.column).toEqual('InProgress');
-    expect(mockCardRepository.updateCardPosition).toHaveBeenCalled();
+    expect(result.column).toEqual(ColumnStatus.InProgress);
+
+    expect(mockBoardRepository.findByUniqueId).toHaveBeenCalledWith(
+      mockBoardFound.uniqueHashedId,
+    );
+
+    expect(mockCardRepository.updateCardPosition).toHaveBeenCalledWith(
+      dto,
+      mockBoardFound.id,
+    );
+
+    expect(mockCardRepository.findCardById).not.toHaveBeenCalled();
   });
 });

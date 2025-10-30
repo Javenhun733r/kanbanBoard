@@ -19,7 +19,7 @@ export interface BoardEntity {
   id: string;
   uniqueHashedId: string;
   name: string;
-  cards?: CardEntity[];
+  cards: CardEntity[];
   createdAt: Date;
   updatedAt: Date;
 }

@@ -28,9 +28,7 @@ export class PrismaEntityMapper {
       name: prismaBoard.name,
       createdAt: prismaBoard.createdAt,
       updatedAt: prismaBoard.updatedAt,
-      cards: prismaBoard.cards
-        ? prismaBoard.cards.map(PrismaEntityMapper.toCardEntity)
-        : undefined,
+      cards: (prismaBoard.cards ?? []).map(PrismaEntityMapper.toCardEntity),
     };
     return boardEntity;
   }

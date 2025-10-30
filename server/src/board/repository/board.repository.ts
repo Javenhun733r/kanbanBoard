@@ -1,97 +1,76 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import {
   NotFoundError,
   UniqueConstraintError,
 } from '../../common/errors/error';
-import { PrismaEntityMapper } from '../../common/mappers/prisma-entity.mapper';
 import {
   CreateBoardDto,
   UpdateBoardDto,
 } from '../../dto/boardDTO/create-board.dto';
-import { Board, Card } from '../../entities/board.entity';
+import { Board } from '../../entities/board.entity';
 import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaEntityMapper } from '../mappers/prisma-entity.mapper';
 
 @Injectable()
 export class BoardRepository {
   constructor(private prisma: PrismaService) {}
 
   async createBoard(data: CreateBoardDto): Promise<Board> {
-    try {
-      const prismaResult = await this.prisma.board.create({ data });
-      return PrismaEntityMapper.toBoardEntity(prismaResult);
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        throw new UniqueConstraintError(
-          `Board with ID "${data.uniqueHashedId}" already exists.`,
-        );
-      }
-      throw error;
-    }
+    const prismaResult = await this.prisma.board.create({ data }).catch(() => {
+      throw new UniqueConstraintError(
+        `Board with ID "${data.uniqueHashedId}" already exists.`,
+      );
+    });
+    return PrismaEntityMapper.toBoardEntity(prismaResult);
   }
   async updateBoard(
     uniqueHashedId: string,
     data: UpdateBoardDto,
   ): Promise<Board> {
-    try {
-      const prismaResult = await this.prisma.board.update({
+    const prismaResult = await this.prisma.board
+      .update({
         where: { uniqueHashedId },
         data,
+      })
+      .catch(() => {
+        throw new NotFoundError(`Board with ID "${uniqueHashedId}" not found.`);
       });
 
-      return PrismaEntityMapper.toBoardEntity(prismaResult);
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
-        throw new NotFoundError(`Board with ID "${uniqueHashedId}" not found.`);
-      }
-      throw error;
-    }
+    return PrismaEntityMapper.toBoardEntity(prismaResult);
   }
-  async findByUniqueId(
-    uniqueHashedId: string,
-  ): Promise<(Board & { cards: Card[] }) | null> {
-    const prismaResult = await this.prisma.board.findUnique({
-      where: { uniqueHashedId },
-      include: {
-        cards: {
-          orderBy: {
-            orderIndex: 'asc',
+  async findByUniqueId(uniqueHashedId: string): Promise<Board> {
+    const prismaResult = await this.prisma.board
+      .findUnique({
+        where: { uniqueHashedId },
+        include: {
+          cards: {
+            orderBy: {
+              orderIndex: 'asc',
+            },
           },
         },
-      },
-    });
-
-    if (!prismaResult) {
-      return null;
-    }
-    return PrismaEntityMapper.toBoardEntity(prismaResult) as Board & {
-      cards: Card[];
-    };
+      })
+      .catch(() => {
+        throw new NotFoundError(`Board with ID "${uniqueHashedId}" not found.`);
+      });
+    return PrismaEntityMapper.toBoardEntity(prismaResult!);
   }
-
-  async deleteBoard(id: string): Promise<void> {
-    try {
-      await this.prisma.$transaction(async (prisma) => {
+  private async getBoardIdByHashedId(uniqueHashedId: string): Promise<string> {
+    const board = await this.findByUniqueId(uniqueHashedId);
+    return board.id;
+  }
+  async deleteBoard(uniqueHashedId: string): Promise<void> {
+    const boardId = await this.getBoardIdByHashedId(uniqueHashedId);
+    await this.prisma
+      .$transaction(async (prisma) => {
         await prisma.card.deleteMany({
-          where: { boardId: id },
+          where: { boardId },
         });
 
-        await prisma.board.delete({ where: { id } });
+        await prisma.board.delete({ where: { id: boardId } });
+      })
+      .catch(() => {
+        throw new NotFoundError(`Board with ID "${boardId}" not found.`);
       });
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
-        throw new NotFoundError('The requested board does not exist');
-      }
-      throw error;
-    }
   }
 }

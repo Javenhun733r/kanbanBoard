@@ -1,43 +1,55 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, ColumnStatus as PrismaColumnStatus } from '@prisma/client';
+import { UpdateCardPositionDto } from 'src/dto/index.dto';
 import { NotFoundError } from '../../common/errors/error';
-import { PrismaEntityMapper } from '../../common/mappers/prisma-entity.mapper';
+import {
+  getShiftParameters,
+  updateOrderIndices,
+} from '../../common/utils/order-utils';
 import {
   CreateCardDto,
   UpdateCardDto,
 } from '../../dto/cardDTO/create-card.dto';
 import { Card, ColumnStatus } from '../../entities/board.entity';
 import { PrismaService } from '../../prisma/prisma.service';
-
+import { PrismaEntityMapper } from '../mappers/prisma-entity.mapper';
 @Injectable()
 export class CardRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findCardById(cardId: string): Promise<Card | null> {
-    const prismaResult = await this.prisma.card.findUnique({
-      where: { id: cardId },
-    });
-    return prismaResult ? PrismaEntityMapper.toCardEntity(prismaResult) : null;
+  async findCardById(cardId: string): Promise<Card> {
+    const prismaResult = await this.prisma.card
+      .findUnique({
+        where: { id: cardId },
+      })
+      .catch(() => {
+        throw new NotFoundError(`Card with ${cardId} doesn't exists`);
+      });
+    return PrismaEntityMapper.toCardEntity(prismaResult!);
   }
-
-  async createCard(boardId: string, data: CreateCardDto): Promise<Card> {
+  private async getNextOrderIndex(
+    boardId: string,
+    column: PrismaColumnStatus,
+  ): Promise<number> {
     const maxOrderCard = await this.prisma.card.findFirst({
       where: {
         boardId: boardId,
-        column: data.column as PrismaColumnStatus,
+        column: column,
       },
       orderBy: { orderIndex: 'desc' },
     });
-
-    const newOrderIndex = maxOrderCard ? maxOrderCard.orderIndex + 1 : 0;
-
+    return maxOrderCard ? maxOrderCard.orderIndex + 1 : 0;
+  }
+  async createCard(boardId: string, data: CreateCardDto): Promise<Card> {
+    const columnStatus = data.column;
+    const nextOrderIndex = await this.getNextOrderIndex(boardId, columnStatus);
     const prismaResult = await this.prisma.card.create({
       data: {
         ...data,
         description: data.description || '',
         boardId: boardId,
-        orderIndex: newOrderIndex,
-        column: data.column as PrismaColumnStatus,
+        orderIndex: nextOrderIndex,
+        column: columnStatus,
       },
     });
 
@@ -45,97 +57,90 @@ export class CardRepository {
   }
 
   async updateCard(cardId: string, data: UpdateCardDto): Promise<Card> {
-    try {
-      const prismaResult = await this.prisma.card.update({
+    const prismaResult = await this.prisma.card
+      .update({
         where: { id: cardId },
         data: {
           ...data,
-          column: data.column as PrismaColumnStatus,
+          column: data.column,
           updatedAt: new Date(),
         },
-      });
-      return PrismaEntityMapper.toCardEntity(prismaResult);
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      })
+      .catch(() => {
         throw new NotFoundError(`Card with ID ${cardId} not found for update.`);
-      }
-      throw error;
-    }
+      });
+    return PrismaEntityMapper.toCardEntity(prismaResult);
   }
 
   async deleteCard(cardId: string): Promise<void> {
-    try {
-      await this.prisma.card.delete({ where: { id: cardId } });
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
-        throw new NotFoundError(
-          `Card with ID ${cardId} not found for deletion.`,
-        );
-      }
-      throw error;
-    }
+    await this.prisma.card.delete({ where: { id: cardId } }).catch(() => {
+      throw new NotFoundError(`Card with ID ${cardId} not found for deletion.`);
+    });
   }
-
-  async updateCardPosition(
+  private async handleOrderUpdates(
+    prisma: Prisma.TransactionClient,
     cardId: string,
+    boardId: string,
     oldColumn: ColumnStatus,
     newColumn: ColumnStatus,
     oldOrderIndex: number,
     newOrderIndex: number,
+  ): Promise<void> {
+    if (oldOrderIndex === newOrderIndex && oldColumn === newColumn) {
+      return;
+    }
+
+    if (oldColumn === newColumn) {
+      const shift = getShiftParameters(oldOrderIndex, newOrderIndex);
+
+      if (shift) {
+        await updateOrderIndices(
+          prisma,
+          boardId,
+          oldColumn,
+          shift.orderIndexCondition,
+          shift.action,
+          cardId,
+        );
+      }
+    } else {
+      await updateOrderIndices(
+        prisma,
+        boardId,
+        oldColumn,
+        { gt: oldOrderIndex },
+        'decrement',
+      );
+
+      await updateOrderIndices(
+        prisma,
+        boardId,
+        newColumn,
+        { gte: newOrderIndex },
+        'increment',
+      );
+    }
+  }
+  async updateCardPosition(
+    dto: UpdateCardPositionDto,
     boardId: string,
   ): Promise<Card> {
+    const card = await this.findCardById(dto.cardId);
     return this.prisma.$transaction(async (prisma) => {
-      if (oldColumn === newColumn) {
-        if (newOrderIndex > oldOrderIndex) {
-          await prisma.card.updateMany({
-            where: {
-              boardId: boardId,
-              column: oldColumn,
-              orderIndex: { gt: oldOrderIndex, lte: newOrderIndex },
-              id: { not: cardId },
-            },
-            data: { orderIndex: { decrement: 1 } },
-          });
-        } else if (newOrderIndex < oldOrderIndex) {
-          await prisma.card.updateMany({
-            where: {
-              boardId: boardId,
-              column: oldColumn,
-              orderIndex: { gte: newOrderIndex, lt: oldOrderIndex },
-              id: { not: cardId },
-            },
-            data: { orderIndex: { increment: 1 } },
-          });
-        }
-      } else {
-        await prisma.card.updateMany({
-          where: {
-            boardId: boardId,
-            column: oldColumn,
-            orderIndex: { gt: oldOrderIndex },
-          },
-          data: { orderIndex: { decrement: 1 } },
-        });
-        await prisma.card.updateMany({
-          where: {
-            boardId: boardId,
-            column: newColumn,
-            orderIndex: { gte: newOrderIndex },
-          },
-          data: { orderIndex: { increment: 1 } },
-        });
-      }
+      await this.handleOrderUpdates(
+        prisma,
+        card.id,
+        boardId,
+        card.column,
+        dto.newColumn as ColumnStatus,
+        card.orderIndex,
+        dto.newOrderIndex,
+      );
       const prismaResult = await prisma.card.update({
-        where: { id: cardId },
+        where: { id: card.id },
         data: {
-          column: newColumn as PrismaColumnStatus,
-          orderIndex: newOrderIndex,
+          column: dto.newColumn,
+          orderIndex: dto.newOrderIndex,
           updatedAt: new Date(),
         },
       });

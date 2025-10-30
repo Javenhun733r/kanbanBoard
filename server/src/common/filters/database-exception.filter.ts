@@ -10,8 +10,38 @@ import { NotFoundError, UniqueConstraintError } from '../errors/error';
 interface DatabaseError {
   code?: string;
   name?: string;
-  message?: string;
 }
+interface ErrorHandlerResult {
+  status: HttpStatus;
+  message: string;
+}
+const ERROR_HANDLERS: {
+  [key: string]: (exception: DatabaseError) => ErrorHandlerResult;
+} = {
+  [UniqueConstraintError.name]: () => ({
+    status: HttpStatus.CONFLICT,
+    message: 'The resource with this unique identifier already exists.',
+  }),
+  [NotFoundError.name]: (ex: NotFoundError) => ({
+    status: HttpStatus.NOT_FOUND,
+    message: ex.message,
+  }),
+  ECONNREFUSED: () => ({
+    status: HttpStatus.SERVICE_UNAVAILABLE,
+    message:
+      'Database service is currently unavailable. Please try again later.',
+  }),
+  ConnectionError: () => ({
+    status: HttpStatus.SERVICE_UNAVAILABLE,
+    message:
+      'Database service is currently unavailable. Please try again later.',
+  }),
+};
+
+const DEFAULT_ERROR_HANDLER: ErrorHandlerResult = {
+  status: HttpStatus.INTERNAL_SERVER_ERROR,
+  message: 'Internal server error.',
+};
 
 @Catch()
 export class DatabaseExceptionFilter implements ExceptionFilter {
@@ -19,36 +49,34 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = 'An unknown database error occurred.';
+    let handlerResult: ErrorHandlerResult = DEFAULT_ERROR_HANDLER;
+    let logUnhandled = true;
 
-    if (exception instanceof UniqueConstraintError) {
-      status = HttpStatus.CONFLICT;
-      message = 'The resource with this unique identifier already exists.';
-    } else if (exception instanceof NotFoundError) {
-      status = HttpStatus.NOT_FOUND;
-      message = exception.message;
-    } else if (exception instanceof Error) {
+    if (exception instanceof Error) {
       const error = exception as DatabaseError;
 
-      if (error.code === 'ECONNREFUSED' || error.name === 'ConnectionError') {
-        status = HttpStatus.SERVICE_UNAVAILABLE;
-        message =
-          'Database service is currently unavailable. Please try again later.';
-      } else {
-        console.error('Unhandled Database Error:', exception);
-        status = HttpStatus.INTERNAL_SERVER_ERROR;
-        message = 'Internal server error.';
+      let handler = ERROR_HANDLERS[error.constructor.name];
+      if (!handler) {
+        handler =
+          ERROR_HANDLERS[error.code as string] ||
+          ERROR_HANDLERS[error.name as string];
       }
-    } else {
-      console.error('Unhandled non-Error exception:', exception);
-      status = HttpStatus.INTERNAL_SERVER_ERROR;
-      message = 'Internal server error.';
+
+      if (handler) {
+        handlerResult = handler(error);
+        logUnhandled = false;
+      }
+    }
+    if (
+      logUnhandled &&
+      handlerResult.status === HttpStatus.INTERNAL_SERVER_ERROR
+    ) {
+      console.error('Unhandled Server Exception:', exception);
     }
 
-    response.status(status).json({
-      statusCode: status,
-      message: message,
+    response.status(handlerResult.status).json({
+      statusCode: handlerResult.status,
+      message: handlerResult.message,
       timestamp: new Date().toISOString(),
     });
   }

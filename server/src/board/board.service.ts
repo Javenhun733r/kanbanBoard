@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   CreateBoardDto,
   CreateCardDto,
@@ -10,7 +6,7 @@ import {
   UpdateCardDto,
   UpdateCardPositionDto,
 } from '../dto/index.dto';
-import { Board, Card, ColumnStatus } from '../entities/board.entity';
+import { Board, Card } from '../entities/board.entity';
 
 import { BoardRepository } from './repository/board.repository';
 import { CardRepository } from './repository/card.repository';
@@ -23,64 +19,36 @@ export class BoardService {
     private readonly boardRepository: BoardRepository,
     private readonly cardRepository: CardRepository,
   ) {}
-
-  async createBoard(data: CreateBoardDto): Promise<Board> {
+  createBoard(data: CreateBoardDto): Promise<Board> {
     return this.boardRepository.createBoard(data);
   }
 
-  async updateBoard(
-    uniqueHashedId: string,
-    data: UpdateBoardDto,
-  ): Promise<Board> {
+  updateBoard(uniqueHashedId: string, data: UpdateBoardDto): Promise<Board> {
     return this.boardRepository.updateBoard(uniqueHashedId, data);
   }
 
   async getBoardWithCards(uniqueHashedId: string): Promise<BoardWithCards> {
     const board = await this.boardRepository.findByUniqueId(uniqueHashedId);
-
-    if (!board) {
-      throw new NotFoundException(
-        `Board with ID "${uniqueHashedId}" not found.`,
-      );
-    }
     return board as BoardWithCards;
   }
-
-  async deleteBoard(board: Board): Promise<void> {
-    await this.boardRepository.deleteBoard(board.id);
+  async deleteBoard(uniqueHashedId: string): Promise<void> {
+    await this.boardRepository.deleteBoard(uniqueHashedId);
   }
-
-  async createCard(board: Board, data: CreateCardDto): Promise<Card> {
+  async createCard(uniqueHashedId: string, data: CreateCardDto): Promise<Card> {
+    const board = await this.boardRepository.findByUniqueId(uniqueHashedId);
     return this.cardRepository.createCard(board.id, data);
   }
-
   async updateCardPosition(
-    board: Board,
+    uniqueHashedId: string,
     dto: UpdateCardPositionDto,
   ): Promise<Card> {
-    const card = await this.cardRepository.findCardById(dto.cardId);
-    if (!card || card.boardId !== board.id) {
-      throw new NotFoundException(
-        `Card not found or does not belong to board ${board.uniqueHashedId}.`,
-      );
-    }
+    const board = await this.boardRepository.findByUniqueId(uniqueHashedId);
 
-    try {
-      const updatedCard = await this.cardRepository.updateCardPosition(
-        card.id,
-        card.column,
-        dto.newColumn as ColumnStatus,
-        card.orderIndex,
-        dto.newOrderIndex,
-        board.id,
-      );
-      return updatedCard;
-    } catch (error) {
-      console.error('Card movement transaction error:', error);
-      throw new InternalServerErrorException(
-        'Error moving card. Please try again later.',
-      );
-    }
+    const updatedCard = await this.cardRepository.updateCardPosition(
+      dto,
+      board.id,
+    );
+    return updatedCard;
   }
 
   async updateCard(cardId: string, data: UpdateCardDto): Promise<Card> {

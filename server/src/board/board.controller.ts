@@ -8,14 +8,8 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
-import { BoardFromRequest } from '../common/decorators/board.decorator';
-import { BoardExistsGuard } from '../common/guards/board-exists.guard';
-import * as requestWithBoardInterface from '../common/interfaces/request-with-board.interface';
-import type { Board, Card } from '../entities/board.entity';
 
-import { BoardMapper } from '../common/mappers/board.mapper';
 import {
   CreateBoardDto,
   CreateCardDto,
@@ -24,6 +18,8 @@ import {
   UpdateCardPositionDto,
 } from '../dto/index.dto';
 import { BoardResponseDto } from '../dto/response.dto';
+import { Card } from '../entities/board.entity';
+import { BoardMapper } from './mappers/board.mapper';
 import { BoardService } from './board.service';
 
 @Controller('boards')
@@ -40,52 +36,42 @@ export class BoardController {
   }
 
   @Get(':uniqueHashedId')
-  @UseGuards(BoardExistsGuard)
   async getBoard(
-    @BoardFromRequest() board: requestWithBoardInterface.BoardWithCards,
+    @Param('uniqueHashedId') uniqueHashedId: string,
   ): Promise<BoardResponseDto> {
-    const boardWithCards = await this.boardService.getBoardWithCards(
-      board.uniqueHashedId,
-    );
+    const boardWithCards =
+      await this.boardService.getBoardWithCards(uniqueHashedId);
+
     return BoardMapper.toBoardResponseDto(boardWithCards);
   }
 
   @Put(':uniqueHashedId')
-  @UseGuards(BoardExistsGuard)
   async updateBoard(
-    @BoardFromRequest() board: Board,
+    @Param('uniqueHashedId') uniqueHashedId: string,
     @Body() updateBoardDto: UpdateBoardDto,
   ): Promise<BoardResponseDto> {
     const updatedBoard = await this.boardService.updateBoard(
-      board.uniqueHashedId,
+      uniqueHashedId,
       updateBoardDto,
     );
     return BoardMapper.toBoardResponseDto({ ...updatedBoard, cards: [] });
   }
 
   @Delete(':uniqueHashedId')
-  @UseGuards(BoardExistsGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteBoard(@BoardFromRequest() board: Board): Promise<void> {
-    await this.boardService.deleteBoard(board);
+  async deleteBoard(
+    @Param('uniqueHashedId') uniqueHashedId: string,
+  ): Promise<void> {
+    await this.boardService.deleteBoard(uniqueHashedId);
   }
 
   @Post(':uniqueHashedId/cards')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(BoardExistsGuard)
   async createCard(
-    @BoardFromRequest() board: Board,
+    @Param('uniqueHashedId') uniqueHashedId: string,
     @Body() createCardDto: CreateCardDto,
   ): Promise<Card> {
-    return this.boardService.createCard(board, createCardDto);
-  }
-  @Put(':uniqueHashedId/cards/position')
-  @UseGuards(BoardExistsGuard)
-  async updateCardPosition(
-    @BoardFromRequest() board: Board,
-    @Body() updatePositionDto: UpdateCardPositionDto,
-  ): Promise<Card> {
-    return this.boardService.updateCardPosition(board, updatePositionDto);
+    return this.boardService.createCard(uniqueHashedId, createCardDto);
   }
 
   @Put('cards/:cardId')
@@ -100,5 +86,15 @@ export class BoardController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteCard(@Param('cardId') cardId: string): Promise<void> {
     await this.boardService.deleteCard(cardId);
+  }
+  @Put(':uniqueHashedId/cards/position')
+  async updateCardPosition(
+    @Param('uniqueHashedId') uniqueHashedId: string,
+    @Body() updatePositionDto: UpdateCardPositionDto,
+  ): Promise<Card> {
+    return this.boardService.updateCardPosition(
+      uniqueHashedId,
+      updatePositionDto,
+    );
   }
 }
