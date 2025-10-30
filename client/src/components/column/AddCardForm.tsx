@@ -1,6 +1,6 @@
 import React from 'react';
-import type { ColumnStatus } from '../../entities/board.entity';
 import { useCreateCardForm } from '../../hooks/useCreateCardForm';
+import type { ColumnStatus } from '../../types/entities/board.entity';
 import Button from '../ui/button/Button';
 
 interface AddCardFormProps {

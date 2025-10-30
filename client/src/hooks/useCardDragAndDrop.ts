@@ -1,8 +1,8 @@
 import type { DropResult } from '@hello-pangea/dnd';
 import toast from 'react-hot-toast';
 import { boardsApi, useUpdateCardPositionMutation } from '../api/boardApi';
-import type { ColumnStatus } from '../entities/board.entity';
 import { store } from '../store/store';
+import type { ColumnStatus } from '../types/entities/board.entity';
 import { reorderCardsOptimistically } from '../utils/optimistic.util';
 
 export const useCardDragAndDrop = (boardId: string) => {

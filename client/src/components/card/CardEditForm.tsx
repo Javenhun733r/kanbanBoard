@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useUpdateCardMutation } from '../../api/boardApi';
-import type { Card } from '../../entities/board.entity';
+import type { Card } from '../../types/entities/board.entity';
 import Button from '../ui/button/Button';
 
 interface CardEditFormProps {
 	card: Card;
-	boardId: string; // The type definition remains correct, but we ignore the value below
+	boardId: string;
 	setIsEditing: (isEditing: boolean) => void;
 }
 

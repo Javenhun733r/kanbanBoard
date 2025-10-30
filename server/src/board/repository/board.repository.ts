@@ -47,7 +47,7 @@ export class BoardRepository {
   }
   async findByUniqueId(uniqueHashedId: string): Promise<Board> {
     const prismaResult = await this.prisma.board
-      .findUnique({
+      .findUniqueOrThrow({
         where: { uniqueHashedId },
         include: {
           cards: {
@@ -60,7 +60,7 @@ export class BoardRepository {
       .catch(() => {
         throw new NotFoundError(`Board with ID "${uniqueHashedId}" not found.`);
       });
-    return PrismaEntityMapper.toBoardEntity(prismaResult!);
+    return PrismaEntityMapper.toBoardEntity(prismaResult);
   }
   private async getBoardIdByHashedId(uniqueHashedId: string): Promise<string> {
     const board = await this.findByUniqueId(uniqueHashedId);

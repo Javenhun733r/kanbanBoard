@@ -1,58 +1,43 @@
 import { useCallback, useState } from 'react';
 import { boardsApi, useGetBoardQuery } from '../api/boardApi';
 import { store } from '../store/store';
-export const useBoardApp = () => {
-	const [inputBoardId, setInputBoardId] = useState<string>('TEST-001');
-	const [loadedBoardId, setLoadedBoardId] = useState<string>('TEST-001');
+
+export const useBoardApp = (currentBoardId: string | undefined) => {
+	const [inputBoardId, setInputBoardId] = useState<string>(
+		currentBoardId || ''
+	);
 	const [isCreatingBoard, setIsCreatingBoard] = useState(false);
+
 	const resetBoardQueryCache = useCallback((id: string) => {
 		store.dispatch(boardsApi.util.invalidateTags([{ type: 'Board', id: id }]));
 	}, []);
 
 	const { data, error, isLoading, isFetching } = useGetBoardQuery(
-		loadedBoardId,
+		currentBoardId || '',
 		{
-			skip: !loadedBoardId || isCreatingBoard,
+			skip: !currentBoardId || isCreatingBoard,
 			selectFromResult: result => ({
 				...result,
 			}),
 		}
 	);
+
 	const resetIdsAndExitCreate = useCallback(() => {
 		setIsCreatingBoard(false);
 		setInputBoardId('');
-		setLoadedBoardId('');
-	}, [setIsCreatingBoard, setInputBoardId, setLoadedBoardId]);
-	const handleLoadBoard = useCallback(
-		(idToLoad: string) => {
-			if (idToLoad) {
-				setLoadedBoardId(idToLoad);
-				setIsCreatingBoard(false);
-			}
-		},
-		[setLoadedBoardId, setIsCreatingBoard]
-	);
+	}, []);
 
 	const handleCreateNewBoard = useCallback(() => {
 		setIsCreatingBoard(true);
 		setInputBoardId('');
-		setLoadedBoardId('');
-	}, [setLoadedBoardId, setIsCreatingBoard, setInputBoardId]);
+	}, []);
 
-	const handleBoardCreated = useCallback(
-		(newId: string) => {
-			setIsCreatingBoard(false);
-			setInputBoardId(newId);
-			setLoadedBoardId(newId);
-		},
-		[setInputBoardId, setLoadedBoardId, setIsCreatingBoard]
-	);
-	const handleBoardDeletedSuccess = useCallback(() => {
-		const deletedId = loadedBoardId;
-		setInputBoardId('');
-		setLoadedBoardId(`${deletedId}`);
+	const handleBoardCreated = useCallback(() => {
 		setIsCreatingBoard(false);
-	}, [loadedBoardId]);
+	}, []);
+
+	const handleBoardDeletedSuccess = useCallback(() => {}, []);
+
 	const isError = !!error;
 	const isInitialLoading = isLoading || isFetching;
 
@@ -63,22 +48,22 @@ export const useBoardApp = () => {
 		isError,
 		isInitialLoading,
 		setInputBoardId,
-		setLoadedBoardId,
 		setIsCreatingBoard,
 		onBoardDeleted: handleBoardDeletedSuccess,
 		resetIdsAndExitCreate,
+		handleBoardCreated,
+
 		headerProps: {
 			inputBoardId,
-			loadedBoardId,
+			loadedBoardId: currentBoardId,
 			isLoading: isLoading,
 			isFetching: isFetching,
 			loadedBoardName: data?.name,
 			setInputBoardId,
-			handleLoadBoard,
+			handleLoadBoard: () => {},
 			resetBoardQueryCache,
 			onCreateNewBoard: handleCreateNewBoard,
 			onDeleteSuccess: handleBoardDeletedSuccess,
 		},
-		handleBoardCreated,
 	};
 };

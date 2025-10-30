@@ -1,6 +1,6 @@
 import { EditIcon, TrashIcon } from 'lucide-react';
 import React from 'react';
-import type { Card } from '../../entities/board.entity';
+import type { Card } from '../../types/entities/board.entity';
 import { calculateTimeAgo } from '../../utils/date.utils';
 import Button from '../ui/button/Button';
 interface CardViewContentProps {

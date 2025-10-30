@@ -1,7 +1,7 @@
 import { DragDropContext } from '@hello-pangea/dnd';
 import React from 'react';
-import type { BoardResponseDto } from '../../dto/board-response.dto';
 import { useCardDragAndDrop } from '../../hooks/useCardDragAndDrop';
+import type { BoardResponseDto } from '../../types/dto/board-response.dto';
 import Column from '../column/Column';
 
 interface BoardProps {

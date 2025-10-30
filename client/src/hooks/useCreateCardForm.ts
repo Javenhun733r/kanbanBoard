@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useCreateCardMutation } from '../api/boardApi';
-import type { ColumnStatus } from '../entities/board.entity';
+import type { ColumnStatus } from '../types/entities/board.entity';
 
 const INITIAL_STATE = {
 	title: '',

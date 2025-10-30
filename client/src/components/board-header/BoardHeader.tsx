@@ -1,5 +1,5 @@
 import React from 'react';
-import BoardActions from './BoardActions';
+import BoardActions from './board-actions/BoardActions';
 import BoardSearch from './BoardSearch';
 
 interface BoardHeaderProps {
@@ -12,6 +12,7 @@ interface BoardHeaderProps {
 	onCreateNewBoard: () => void;
 	onDeleteSuccess: () => void;
 	loadedBoardName: string | undefined;
+	allHashIds: string[];
 }
 
 const BoardHeader: React.FC<BoardHeaderProps> = ({
@@ -24,6 +25,7 @@ const BoardHeader: React.FC<BoardHeaderProps> = ({
 	handleLoadBoard,
 	onDeleteSuccess,
 	onCreateNewBoard,
+	allHashIds,
 }) => {
 	return (
 		<div className='p-6 bg-white shadow-md fixed top-0 w-full z-10'>
@@ -35,6 +37,7 @@ const BoardHeader: React.FC<BoardHeaderProps> = ({
 					isFetching={isFetching}
 					setInputBoardId={setInputBoardId}
 					handleLoadBoard={() => handleLoadBoard(inputBoardId)}
+					allHashIds={allHashIds}
 				/>
 			</div>
 

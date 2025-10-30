@@ -19,13 +19,13 @@ export class CardRepository {
 
   async findCardById(cardId: string): Promise<Card> {
     const prismaResult = await this.prisma.card
-      .findUnique({
+      .findUniqueOrThrow({
         where: { id: cardId },
       })
       .catch(() => {
         throw new NotFoundError(`Card with ${cardId} doesn't exists`);
       });
-    return PrismaEntityMapper.toCardEntity(prismaResult!);
+    return PrismaEntityMapper.toCardEntity(prismaResult);
   }
   private async getNextOrderIndex(
     boardId: string,

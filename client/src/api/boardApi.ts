@@ -11,8 +11,8 @@ import {
 	updateCardPositionUrl,
 	updateCardUrl,
 } from '../config/api.config';
-import type { BoardResponseDto } from '../dto/board-response.dto';
-import type { Card, ColumnStatus } from '../entities/board.entity';
+import type { BoardResponseDto } from '../types/dto/board-response.dto';
+import type { Card, ColumnStatus } from '../types/entities/board.entity';
 
 interface UpdatePositionPayload {
 	cardId: string;

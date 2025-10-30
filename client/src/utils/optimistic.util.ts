@@ -1,5 +1,5 @@
-import type { BoardResponseDto } from '../dto/board-response.dto';
-import type { ColumnStatus } from '../entities/board.entity';
+import type { BoardResponseDto } from '../types/dto/board-response.dto';
+import type { ColumnStatus } from '../types/entities/board.entity';
 
 export const reorderCardsOptimistically = (
 	draft: BoardResponseDto,
