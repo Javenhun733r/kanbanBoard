@@ -22,7 +22,9 @@ export class BoardService {
   createBoard(data: CreateBoardDto): Promise<Board> {
     return this.boardRepository.createBoard(data);
   }
-
+  getAllBoardsUniqueHashId(): Promise<string[]> {
+    return this.boardRepository.getAllBoardsUniqueHashId();
+  }
   updateBoard(uniqueHashedId: string, data: UpdateBoardDto): Promise<Board> {
     return this.boardRepository.updateBoard(uniqueHashedId, data);
   }

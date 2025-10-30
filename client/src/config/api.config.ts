@@ -1,6 +1,7 @@
 export const SERVER_URL: string = import.meta.env.VITE_SERVER_URL;
 export const API_URL: string = SERVER_URL;
 export const BOARDS_API_TAG = 'Board';
+export const getAllBoardsUniqueHashId = () => `/boards/`;
 export const getBoardUrl = (uniqueHashedId: string) =>
 	`/boards/${uniqueHashedId}`;
 export const updateBoardUrl = (uniqueHashedId: string) =>

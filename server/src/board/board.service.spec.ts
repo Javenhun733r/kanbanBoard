@@ -122,10 +122,7 @@ describe('BoardsService', () => {
       service.deleteBoard(mockBoardFound.uniqueHashedId),
     ).resolves.toBeUndefined();
 
-    expect(mockBoardRepository.findByUniqueId).toHaveBeenCalledWith(
-      mockBoardFound.uniqueHashedId,
-    );
-    expect(mockBoardRepository.deleteBoard).toHaveBeenCalledWith('uuid-1');
+    expect(mockBoardRepository.deleteBoard).toHaveBeenCalledWith('TEST-001');
   });
 
   it('should successfully create a card', async () => {

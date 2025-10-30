@@ -19,13 +19,16 @@ import {
 } from '../dto/index.dto';
 import { BoardResponseDto } from '../dto/response.dto';
 import { Card } from '../entities/board.entity';
-import { BoardMapper } from './mappers/board.mapper';
 import { BoardService } from './board.service';
+import { BoardMapper } from './mappers/board.mapper';
 
 @Controller('boards')
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
-
+  @Get()
+  async getAllBoardsUniqueHashId(): Promise<string[]> {
+    return this.boardService.getAllBoardsUniqueHashId();
+  }
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createBoard(

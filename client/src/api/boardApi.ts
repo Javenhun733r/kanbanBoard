@@ -5,6 +5,7 @@ import {
 	createBoardUrl,
 	createCardUrl,
 	deleteCardUrl,
+	getAllBoardsUniqueHashId,
 	getBoardUrl,
 	updateBoardUrl,
 	updateCardPositionUrl,
@@ -42,6 +43,10 @@ export const boardsApi = createApi({
 			providesTags: (_, __, uniqueHashedId) => [
 				{ type: BOARDS_API_TAG, id: uniqueHashedId },
 			],
+		}),
+		getAllHashIds: builder.query<string[], void>({
+			query: () => getAllBoardsUniqueHashId(),
+			providesTags: [BOARDS_API_TAG],
 		}),
 		updateBoard: builder.mutation<BoardResponseDto, UpdateBoardPayload>({
 			query: ({ uniqueHashedId, payload }) => ({
@@ -132,6 +137,7 @@ export const {
 	useCreateCardMutation,
 	useUpdateCardMutation,
 	useDeleteCardMutation,
+	useGetAllHashIdsQuery,
 	useDeleteBoardMutation,
 	useUpdateBoardMutation,
 	useUpdateCardPositionMutation,

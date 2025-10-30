@@ -14,7 +14,14 @@ import { PrismaEntityMapper } from '../mappers/prisma-entity.mapper';
 @Injectable()
 export class BoardRepository {
   constructor(private prisma: PrismaService) {}
-
+  async getAllBoardsUniqueHashId(): Promise<string[]> {
+    const boards = await this.prisma.board.findMany({
+      select: {
+        uniqueHashedId: true,
+      },
+    });
+    return boards.map((board) => board.uniqueHashedId);
+  }
   async createBoard(data: CreateBoardDto): Promise<Board> {
     const prismaResult = await this.prisma.board.create({ data }).catch(() => {
       throw new UniqueConstraintError(
