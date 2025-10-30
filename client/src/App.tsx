@@ -2,10 +2,10 @@ import { Toaster } from 'react-hot-toast';
 import BoardHeader from './components/board-header/BoardHeader';
 import Board from './components/board/Board';
 import CreateBoardForm from './components/board/CreateBoardForm';
+import StatusWrapper from './components/wrappers/StatusWrapper';
 import { useBoardApp } from './hooks/useBoardApp';
 import LoadingState from './states/LoadingState';
 import { formatApiError } from './utils/error.utils';
-import StatusWrapper from './wrappers/StatusWrapper';
 
 function App() {
 	const {
