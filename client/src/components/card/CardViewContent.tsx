@@ -1,8 +1,8 @@
+import type { Card } from '@appTypes/entities/board.entity';
+import Button from '@components/ui/button/Button';
+import { calculateTimeAgo } from '@utils/date.utils';
 import { EditIcon, TrashIcon } from 'lucide-react';
 import React from 'react';
-import type { Card } from '../../types/entities/board.entity';
-import { calculateTimeAgo } from '../../utils/date.utils';
-import Button from '../ui/button/Button';
 interface CardViewContentProps {
 	card: Card;
 	isDeleting: boolean;

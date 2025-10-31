@@ -1,8 +1,8 @@
 import { DragDropContext } from '@hello-pangea/dnd';
 import React, { useMemo } from 'react';
-import { useCardDragAndDrop } from '../../hooks/useCardDragAndDrop';
-import type { BoardResponseDto } from '../../types/dto/board-response.dto';
-import Column from '../column/Column';
+import { useCardDragAndDrop } from '@hooks/useCardDragAndDrop';
+import type { BoardResponseDto } from '@appTypes/dto/board-response.dto';
+import Column from '@components/column/Column';
 
 interface BoardProps {
 	boardData: BoardResponseDto;

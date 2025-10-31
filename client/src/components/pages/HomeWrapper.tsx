@@ -1,8 +1,8 @@
+import { useGetAllHashIdsQuery } from '@api/boardApi';
+import BoardHeader from '@components/board-header/BoardHeader';
+import { useBoardApp } from '@hooks/useBoardApp';
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGetAllHashIdsQuery } from '../../api/boardApi';
-import { useBoardApp } from '../../hooks/useBoardApp';
-import BoardHeader from '../board-header/BoardHeader';
 
 const HomeWrapper: React.FC = () => {
 	const navigate = useNavigate();

@@ -1,4 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type { BoardResponseDto } from '@appTypes/dto/board-response.dto';
+import type { Card, ColumnStatus } from '@appTypes/entities/board.entity';
 import {
 	API_URL,
 	BOARDS_API_TAG,
@@ -10,9 +11,8 @@ import {
 	updateBoardUrl,
 	updateCardPositionUrl,
 	updateCardUrl,
-} from '../config/api.config';
-import type { BoardResponseDto } from '../types/dto/board-response.dto';
-import type { Card, ColumnStatus } from '../types/entities/board.entity';
+} from '@config/api.config';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 interface UpdatePositionPayload {
 	cardId: string;

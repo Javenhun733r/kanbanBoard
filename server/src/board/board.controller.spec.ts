@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UpdateCardPositionDto } from '../dto/index.dto';
-import { BoardResponseDto } from '../dto/response.dto';
-import { Board, Card, ColumnStatus } from '../entities/board.entity';
-import { BoardController } from './board.controller';
-import { BoardService } from './board.service';
-import { BoardMapper } from './mappers/board.mapper';
-import { BoardRepository } from './repository/board.repository';
+import { UpdateCardPositionDto } from '@app/dto/index.dto';
+import { BoardResponseDto } from '@app/dto/response.dto';
+import { Board, Card, ColumnStatus } from '@app/entities/board.entity';
+import { BoardController } from '@app/board/board.controller';
+import { BoardService } from '@app/board/board.service';
+import { BoardMapper } from '@app/board/mappers/board.mapper';
+import { BoardRepository } from '@app/board/repository/board.repository';
 
 const MOCK_BOARD_HASH_ID = 'TEST-001';
 const MOCK_CARD_ID = 'CARD-UUID-123';

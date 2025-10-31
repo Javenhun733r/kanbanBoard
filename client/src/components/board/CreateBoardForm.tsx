@@ -1,7 +1,7 @@
 import React from 'react';
-import { useCreateBoardForm } from '../../hooks/useCreateBoardForm';
-import { generateHashedId } from '../../utils/id.utils';
-import Button from '../ui/button/Button';
+import { useCreateBoardForm } from '@hooks/useCreateBoardForm';
+import { generateHashedId } from '@utils/id.utils';
+import Button from '@components/ui/button/Button';
 
 interface CreateBoardFormProps {
 	onBoardCreated: (newId: string) => void;

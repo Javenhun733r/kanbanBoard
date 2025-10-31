@@ -1,7 +1,7 @@
 import { Droppable } from '@hello-pangea/dnd';
 import React from 'react';
-import type { Card, ColumnStatus } from '../../types/entities/board.entity';
-import CardItem from '../card/CardItem';
+import type { Card, ColumnStatus } from '@appTypes/entities/board.entity';
+import CardItem from '@components/card/CardItem';
 import AddCardForm from './AddCardForm';
 
 interface ColumnProps {

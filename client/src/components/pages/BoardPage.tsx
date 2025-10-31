@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetAllHashIdsQuery } from '../../api/boardApi';
-import { useBoardApp } from '../../hooks/useBoardApp';
-import { formatApiError } from '../../utils/error.utils';
-import BoardHeader from '../board-header/BoardHeader';
-import Board from '../board/Board';
-import LoadingState from '../ui/states/LoadingState';
-import StatusWrapper from '../ui/wrappers/StatusWrapper';
+import { useGetAllHashIdsQuery } from '@api/boardApi';
+import { useBoardApp } from '@hooks/useBoardApp';
+import { formatApiError } from '@utils/error.utils';
+import BoardHeader from '@components/board-header/BoardHeader';
+import Board from '@components/board/Board';
+import LoadingState from '@components/ui/states/LoadingState';
+import StatusWrapper from '@components/ui/wrappers/StatusWrapper';
 
 const BoardPage: React.FC = () => {
 	const { boardId } = useParams<{ boardId: string }>();

@@ -1,4 +1,4 @@
-import type { ColumnStatus } from '../entities/board.entity';
+import type { ColumnStatus } from '@appTypes/entities/board.entity';
 
 export interface CardResponseDto {
 	id: string;

@@ -1,7 +1,7 @@
+import type { ColumnStatus } from '@appTypes/entities/board.entity';
+import Button from '@components/ui/button/Button';
+import { useCreateCardForm } from '@hooks/useCreateCardForm';
 import React from 'react';
-import { useCreateCardForm } from '../../hooks/useCreateCardForm';
-import type { ColumnStatus } from '../../types/entities/board.entity';
-import Button from '../ui/button/Button';
 
 interface AddCardFormProps {
 	boardId: string;

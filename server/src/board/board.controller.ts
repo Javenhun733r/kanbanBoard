@@ -10,17 +10,17 @@ import {
   Put,
 } from '@nestjs/common';
 
+import { BoardService } from '@app/board/board.service';
+import { BoardMapper } from '@app/board/mappers/board.mapper';
 import {
   CreateBoardDto,
   CreateCardDto,
   UpdateBoardDto,
   UpdateCardDto,
   UpdateCardPositionDto,
-} from '../dto/index.dto';
-import { BoardResponseDto } from '../dto/response.dto';
-import { Card } from '../entities/board.entity';
-import { BoardService } from './board.service';
-import { BoardMapper } from './mappers/board.mapper';
+} from '@app/dto/index.dto';
+import { BoardResponseDto } from '@app/dto/response.dto';
+import { Card } from '@app/entities/board.entity';
 
 @Controller('boards')
 export class BoardController {

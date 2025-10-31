@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useUpdateCardMutation } from '../../api/boardApi';
-import type { Card } from '../../types/entities/board.entity';
-import Button from '../ui/button/Button';
+import { useUpdateCardMutation } from '@api/boardApi';
+import type { Card } from '@appTypes/entities/board.entity';
+import Button from '@components/ui/button/Button';
 
 interface CardEditFormProps {
 	card: Card;

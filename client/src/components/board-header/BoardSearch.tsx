@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from '../ui/button/Button';
+import Button from '@components/ui/button/Button';
 interface BoardSearchProps {
 	inputBoardId: string;
 	loadedBoardId: string;

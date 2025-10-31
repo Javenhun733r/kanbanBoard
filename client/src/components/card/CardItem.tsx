@@ -1,7 +1,7 @@
+import { useDeleteCardMutation } from '@api/boardApi';
+import type { Card } from '@appTypes/entities/board.entity';
 import { Draggable } from '@hello-pangea/dnd';
 import React, { useCallback, useState } from 'react';
-import { useDeleteCardMutation } from '../../api/boardApi';
-import type { Card } from '../../types/entities/board.entity';
 import CardEditForm from './CardEditForm';
 import CardViewContent from './CardViewContent';
 

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { boardsApi, useGetBoardQuery } from '../api/boardApi';
-import { store } from '../store/store';
+import { boardsApi, useGetBoardQuery } from '@api/boardApi';
+import { store } from '@store/store';
 
 export const useBoardApp = (currentBoardId: string | undefined) => {
 	const [inputBoardId, setInputBoardId] = useState<string>(
@@ -37,7 +37,6 @@ export const useBoardApp = (currentBoardId: string | undefined) => {
 	}, []);
 
 	const handleBoardDeletedSuccess = useCallback(() => {}, []);
-	const handleLoadBoardStub = useCallback(() => {}, []);
 	const isError = !!error;
 	const isInitialLoading = isLoading || isFetching;
 
@@ -49,7 +48,6 @@ export const useBoardApp = (currentBoardId: string | undefined) => {
 			isFetching: isFetching,
 			loadedBoardName: data?.name,
 			setInputBoardId,
-			handleLoadBoard: handleLoadBoardStub,
 			resetBoardQueryCache,
 			onCreateNewBoard: handleCreateNewBoard,
 			onDeleteSuccess: handleBoardDeletedSuccess,
@@ -61,7 +59,6 @@ export const useBoardApp = (currentBoardId: string | undefined) => {
 		isFetching,
 		data?.name,
 		setInputBoardId,
-		handleLoadBoardStub,
 		resetBoardQueryCache,
 		handleCreateNewBoard,
 		handleBoardDeletedSuccess,

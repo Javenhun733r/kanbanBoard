@@ -21,8 +21,9 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
+
     "paths": {
-      "src/*": ["*"],
+      "@app/*": ["*"],
 
       "generated/prisma": ["../node_modules/@prisma/client"]
     }

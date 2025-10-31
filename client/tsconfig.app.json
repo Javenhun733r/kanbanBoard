@@ -15,7 +15,16 @@
 		"moduleDetection": "force",
 		"noEmit": true,
 		"jsx": "react-jsx",
-
+		"baseUrl": "src",
+		"paths": {
+			"@store/*": ["store/*"],
+			"@api/*": ["api/*"],
+			"@hooks/*": ["hooks/*"],
+			"@utils/*": ["utils/*"],
+			"@components/*": ["components/*"],
+			"@appTypes/*": ["types/*"],
+			"@config/*": ["config/*"]
+		},
 		/* Linting */
 		"strict": true,
 		"noUnusedLocals": true,

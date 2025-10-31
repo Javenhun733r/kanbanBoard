@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from 'src/prisma/prisma.module';
-import { BoardController } from './board.controller';
-import { BoardService } from './board.service';
-import { BoardRepository } from './repository/board.repository';
-import { CardRepository } from './repository/card.repository';
+import { PrismaModule } from '@app/prisma/prisma.module';
+import { BoardController } from '@app/board/board.controller';
+import { BoardService } from '@app/board/board.service';
+import { BoardRepository } from '@app/board/repository/board.repository';
+import { CardRepository } from '@app/board/repository/card.repository';
 
 @Module({
   controllers: [BoardController],

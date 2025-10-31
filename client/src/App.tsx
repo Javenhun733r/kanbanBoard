@@ -1,12 +1,12 @@
 import { lazy, Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import LoadingState from './components/ui/states/LoadingState';
+import LoadingState from '@components/ui/states/LoadingState';
 
-const LazyHomeWrapper = lazy(() => import('./components/pages/HomeWrapper'));
-const LazyBoardPage = lazy(() => import('./components/pages/BoardPage'));
+const LazyHomeWrapper = lazy(() => import('@components/pages/HomeWrapper'));
+const LazyBoardPage = lazy(() => import('@components/pages/BoardPage'));
 const LazyCreatePage = lazy(
-	() => import('./components/pages/CreateBoardWrapper')
+	() => import('@components/pages/CreateBoardWrapper')
 );
 function App() {
 	return (

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundError, UniqueConstraintError } from '../common/errors/error';
-import { UpdateCardPositionDto } from '../dto/index.dto';
-import { Board, Card, ColumnStatus } from '../entities/board.entity';
-import { BoardService } from './board.service';
-import { BoardRepository } from './repository/board.repository';
-import { CardRepository } from './repository/card.repository';
+import { NotFoundError, UniqueConstraintError } from '@app/common/errors/error';
+import { UpdateCardPositionDto } from '@app/dto/index.dto';
+import { Board, Card, ColumnStatus } from '@app/entities/board.entity';
+import { BoardService } from '@app/board/board.service';
+import { BoardRepository } from '@app/board/repository/board.repository';
+import { CardRepository } from '@app/board/repository/card.repository';
 
 const mockBoardRepository = {
   createBoard: jest.fn(),

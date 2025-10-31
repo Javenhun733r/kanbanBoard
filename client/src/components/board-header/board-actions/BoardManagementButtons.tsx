@@ -1,8 +1,8 @@
+import { useDeleteBoardMutation } from '@api/boardApi';
+import Button from '@components/ui/button/Button';
 import { PlusIcon, TrashIcon } from 'lucide-react';
 import React from 'react';
 import toast from 'react-hot-toast';
-import { useDeleteBoardMutation } from '../../../api/boardApi';
-import Button from '../../ui/button/Button';
 
 interface BoardManagementButtonsProps {
 	loadedBoardId: string;

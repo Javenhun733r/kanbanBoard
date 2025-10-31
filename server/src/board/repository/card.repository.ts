@@ -1,18 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma, ColumnStatus as PrismaColumnStatus } from '@prisma/client';
-import { UpdateCardPositionDto } from 'src/dto/index.dto';
-import { NotFoundError } from '../../common/errors/error';
+import { PrismaEntityMapper } from '@app/board/mappers/prisma-entity.mapper';
+import { NotFoundError } from '@app/common/errors/error';
 import {
   getShiftParameters,
   updateOrderIndices,
-} from '../../common/utils/order-utils';
-import {
-  CreateCardDto,
-  UpdateCardDto,
-} from '../../dto/cardDTO/create-card.dto';
-import { Card, ColumnStatus } from '../../entities/board.entity';
-import { PrismaService } from '../../prisma/prisma.service';
-import { PrismaEntityMapper } from '../mappers/prisma-entity.mapper';
+} from '@app/common/utils/order-utils';
+import { CreateCardDto, UpdateCardDto } from '@app/dto/cardDTO/create-card.dto';
+import { UpdateCardPositionDto } from '@app/dto/index.dto';
+import { Card, ColumnStatus } from '@app/entities/board.entity';
+import { PrismaService } from '@app/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
+import { Prisma, ColumnStatus as PrismaColumnStatus } from '@prisma/client';
 @Injectable()
 export class CardRepository {
   constructor(private prisma: PrismaService) {}

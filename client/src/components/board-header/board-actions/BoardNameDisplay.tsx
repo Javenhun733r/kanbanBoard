@@ -1,7 +1,7 @@
-import { useUpdateBoardMutation } from '../../../api/boardApi';
+import { useUpdateBoardMutation } from '@api/boardApi';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import Button from '../../ui/button/Button';
+import Button from '@components/ui/button/Button';
 
 interface BoardNameDisplayProps {
 	loadedBoardId: string;

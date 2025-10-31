@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { boardsApi } from '../api/boardApi';
+import { boardsApi } from '@api/boardApi';
 
 export const store = configureStore({
 	reducer: {

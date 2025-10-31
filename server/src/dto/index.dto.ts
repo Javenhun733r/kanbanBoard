@@ -1,3 +1,3 @@
-export * from './boardDTO/create-board.dto';
-export * from './cardDTO/create-card.dto';
-export * from './cardDTO/update-card-position.dto';
+export * from '@app/dto/boardDTO/create-board.dto';
+export * from '@app/dto/cardDTO/create-card.dto';
+export * from '@app/dto/cardDTO/update-card-position.dto';

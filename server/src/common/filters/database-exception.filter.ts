@@ -5,7 +5,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { NotFoundError, UniqueConstraintError } from '../errors/error';
+import { NotFoundError, UniqueConstraintError } from '@app/common/errors/error';
 
 interface DatabaseError {
   code?: string;

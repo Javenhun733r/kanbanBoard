@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useCreateBoardMutation } from '../api/boardApi';
-import { isApiError } from '../utils/api.utils';
-import { generateHashedId } from '../utils/id.utils';
+import { useCreateBoardMutation } from '@api/boardApi';
+import { isApiError } from '@utils/api.utils';
+import { generateHashedId } from '@utils/id.utils';
 
 interface CreateBoardFormOptions {
 	onSuccess: (newId: string) => void;

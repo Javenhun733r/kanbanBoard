@@ -1,15 +1,15 @@
-import { Injectable } from '@nestjs/common';
 import {
   CreateBoardDto,
   CreateCardDto,
   UpdateBoardDto,
   UpdateCardDto,
   UpdateCardPositionDto,
-} from '../dto/index.dto';
-import { Board, Card } from '../entities/board.entity';
+} from '@app/dto/index.dto';
+import { Board, Card } from '@app/entities/board.entity';
+import { Injectable } from '@nestjs/common';
 
-import { BoardRepository } from './repository/board.repository';
-import { CardRepository } from './repository/card.repository';
+import { BoardRepository } from '@app/board/repository/board.repository';
+import { CardRepository } from '@app/board/repository/card.repository';
 
 type BoardWithCards = Board & { cards: Card[] };
 

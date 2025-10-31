@@ -4,7 +4,7 @@ import {
   BoardEntity,
   Card,
   ColumnStatus,
-} from '../../entities/board.entity';
+} from '@app/entities/board.entity';
 
 export class PrismaEntityMapper {
   static toCardEntity = (prismaCard: PrismaCard): Card => {

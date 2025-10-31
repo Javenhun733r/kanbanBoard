@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGetAllHashIdsQuery } from '../../api/boardApi';
-import { useBoardApp } from '../../hooks/useBoardApp';
-import BoardHeader from '../board-header/BoardHeader';
-import CreateBoardForm from '../board/CreateBoardForm';
+import { useGetAllHashIdsQuery } from '@api/boardApi';
+import { useBoardApp } from '@hooks/useBoardApp';
+import BoardHeader from '@components/board-header/BoardHeader';
+import CreateBoardForm from '@components/board/CreateBoardForm';
 
 const CreateBoardWrapper: React.FC = () => {
 	const navigate = useNavigate();
