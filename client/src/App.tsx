@@ -1,7 +1,7 @@
+import LoadingState from '@components/ui/states/LoadingState';
 import { lazy, Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import LoadingState from '@components/ui/states/LoadingState';
 
 const LazyHomeWrapper = lazy(() => import('@components/pages/HomeWrapper'));
 const LazyBoardPage = lazy(() => import('@components/pages/BoardPage'));
@@ -12,7 +12,7 @@ function App() {
 	return (
 		<Router>
 			<Toaster position='top-right' reverseOrder={false} />
-			<Suspense fallback={<LoadingState />}>
+			<Suspense fallback={<LoadingState header={undefined} />}>
 				<Routes>
 					<Route path='/' element={<LazyHomeWrapper />} />
 
