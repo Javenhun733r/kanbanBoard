@@ -49,17 +49,19 @@ const CardViewContent: React.FC<CardViewContentProps> = ({
 					</Button>
 				</div>
 			</div>
-			{card.description && (
-				<p className='text-xs text-gray-700 mt-1 line-clamp-3'>
-					{card.description}
-				</p>
-			)}
-			<div className='text-xs text-gray-500 mt-2'>
-				<p>
-					#{card.id.substring(0, 5)} updated{' '}
-					<span className='font-semibold'>{timeAgo}</span>
-					{timeAgo !== 'today' && ' ago'}
-				</p>
+			<div className='max-w-[90%]'>
+				{card.description && (
+					<p className='text-xs text-gray-700 mt-1 line-clamp-3'>
+						{card.description}
+					</p>
+				)}
+				<div className='text-xs text-gray-500 mt-2'>
+					<p>
+						#{card.id.substring(0, 5)} updated{' '}
+						<span className='font-semibold'>{timeAgo}</span>
+						{timeAgo !== 'today' && ' ago'}
+					</p>
+				</div>
 			</div>
 		</>
 	);

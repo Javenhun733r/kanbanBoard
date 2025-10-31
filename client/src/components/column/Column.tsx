@@ -26,7 +26,7 @@ const Column: React.FC<ColumnProps> = ({
 					ref={provided.innerRef}
 					{...provided.droppableProps}
 					className={`
-            min-w-2xs p-4 rounded-lg shrink-0 min-h-[600px]
+             p-4 rounded-lg shrink-0 min-h-[600px] w-[30%]
             ${
 							snapshot.isDraggingOver
 								? 'bg-indigo-50 border-indigo-400'

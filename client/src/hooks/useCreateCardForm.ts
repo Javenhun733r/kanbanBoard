@@ -49,7 +49,10 @@ export const useCreateCardForm = ({
 				},
 			}).unwrap();
 
-			setFormData(INITIAL_STATE);
+			setFormData({
+				...INITIAL_STATE,
+				column: initialColumn,
+			});
 			setIsFormVisible(false);
 			onSuccess();
 		} catch (err) {
