@@ -1,8 +1,8 @@
-import { DragDropContext } from '@hello-pangea/dnd';
-import React, { useMemo } from 'react';
-import { useCardDragAndDrop } from '@hooks/useCardDragAndDrop';
 import type { BoardResponseDto } from '@appTypes/dto/board-response.dto';
 import Column from '@components/column/Column';
+import { DragDropContext } from '@hello-pangea/dnd';
+import { useCardDragAndDrop } from '@hooks/useCardDragAndDrop';
+import React, { useMemo } from 'react';
 
 interface BoardProps {
 	boardData: BoardResponseDto;
@@ -22,7 +22,7 @@ const Board: React.FC<BoardProps> = ({ boardData }) => {
 	return (
 		<div className='p-6 bg-gray-50 min-h-screen'>
 			<DragDropContext onDragEnd={onDragEnd}>
-				<div className='flex space-x-6 overflow-x-auto min-w-full transition-all duration-300 ease-in-out'>
+				<div className='flex space-x-6 overflow-x-auto min-w-full transition-all duration-100 ease-in-out'>
 					<Column
 						title='ToDo'
 						cards={todoCards}

@@ -30,7 +30,7 @@ const Column: React.FC<ColumnProps> = ({
 								? 'bg-indigo-50 border-indigo-400'
 								: 'bg-gray-100 border-gray-300'
 						} 
-            border-2 transition-all duration-200
+            border-2 transition-all duration-50
           `}
 				>
 					<h3 className='font-bold text-lg mb-4 text-gray-800 border-b-2 pb-2 text-center'>
