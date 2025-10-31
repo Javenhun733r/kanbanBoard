@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useGetAllHashIdsQuery } from '../../api/boardApi';
 import { useBoardApp } from '../../hooks/useBoardApp';
-import LoadingState from '../ui/states/LoadingState';
 import { formatApiError } from '../../utils/error.utils';
 import BoardHeader from '../board-header/BoardHeader';
 import Board from '../board/Board';
+import LoadingState from '../ui/states/LoadingState';
 import StatusWrapper from '../ui/wrappers/StatusWrapper';
-import { useGetAllHashIdsQuery } from '../../api/boardApi';
 
 const BoardPage: React.FC = () => {
 	const { boardId } = useParams<{ boardId: string }>();
@@ -14,28 +14,40 @@ const BoardPage: React.FC = () => {
 	const { data, error, isError, isInitialLoading, headerProps } =
 		useBoardApp(boardId);
 	const { data: allHashIds = [] } = useGetAllHashIdsQuery();
-	const handleLoadBoard = (idToLoad: string) => {
-		if (idToLoad && idToLoad !== boardId) {
-			navigate(`/board/${idToLoad}`);
-		}
-	};
+	const handleLoadBoard = useCallback(
+		(idToLoad: string) => {
+			if (idToLoad && idToLoad !== boardId) {
+				navigate(`/board/${idToLoad}`);
+			}
+		},
+		[navigate, boardId]
+	);
 
-	const handleCreateNewBoard = () => {
+	const handleCreateNewBoard = useCallback(() => {
 		navigate('/create');
-	};
+	}, [navigate]);
 
-	const handleBoardDeletedSuccess = () => {
+	const handleBoardDeletedSuccess = useCallback(() => {
 		navigate('/');
-	};
+	}, [navigate]);
 
-	const updatedHeaderProps = {
-		...headerProps,
-		loadedBoardId: boardId || '',
-		handleLoadBoard: handleLoadBoard,
-		onCreateNewBoard: handleCreateNewBoard,
-		onDeleteSuccess: handleBoardDeletedSuccess,
-		allHashIds: allHashIds,
-	};
+	const updatedHeaderProps = useMemo(() => {
+		return {
+			...headerProps,
+			loadedBoardId: boardId || '',
+			handleLoadBoard: handleLoadBoard,
+			onCreateNewBoard: handleCreateNewBoard,
+			onDeleteSuccess: handleBoardDeletedSuccess,
+			allHashIds: allHashIds,
+		};
+	}, [
+		headerProps,
+		boardId,
+		handleLoadBoard,
+		handleCreateNewBoard,
+		handleBoardDeletedSuccess,
+		allHashIds,
+	]);
 
 	const headerComponent = <BoardHeader {...updatedHeaderProps} />;
 

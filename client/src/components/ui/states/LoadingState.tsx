@@ -6,12 +6,11 @@ interface LoadingStateProps {
 
 const LoadingState: React.FC<LoadingStateProps> = ({ header }) => {
 	return (
-		<div className='flex flex-col items-center justify-center min-h-screen bg-gray-100'>
+		<div className='flex items-center justify-center min-h-screen bg-gray-50'>
 			{header}
-			<div className='p-8 bg-white rounded-lg shadow-xl mt-8'>
-				<div className='text-xl font-semibold text-indigo-500'>
-					Loading board...
-				</div>
+			<div className='flex flex-col items-center space-y-4'>
+				<div className='w-12 h-12 border-4 border-blue-500 border-solid rounded-full animate-spin border-t-transparent'></div>
+				<p className='text-gray-600 text-lg font-medium'>Loading board...</p>
 			</div>
 		</div>
 	);

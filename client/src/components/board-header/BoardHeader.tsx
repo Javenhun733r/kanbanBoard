@@ -51,4 +51,4 @@ const BoardHeader: React.FC<BoardHeaderProps> = ({
 	);
 };
 
-export default BoardHeader;
+export default React.memo(BoardHeader);

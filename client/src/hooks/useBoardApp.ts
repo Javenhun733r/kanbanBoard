@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { boardsApi, useGetBoardQuery } from '../api/boardApi';
 import { store } from '../store/store';
 
@@ -37,11 +37,51 @@ export const useBoardApp = (currentBoardId: string | undefined) => {
 	}, []);
 
 	const handleBoardDeletedSuccess = useCallback(() => {}, []);
-
+	const handleLoadBoardStub = useCallback(() => {}, []);
 	const isError = !!error;
 	const isInitialLoading = isLoading || isFetching;
 
-	return {
+	const headerProps = useMemo(() => {
+		return {
+			inputBoardId,
+			loadedBoardId: currentBoardId,
+			isLoading: isLoading,
+			isFetching: isFetching,
+			loadedBoardName: data?.name,
+			setInputBoardId,
+			handleLoadBoard: handleLoadBoardStub,
+			resetBoardQueryCache,
+			onCreateNewBoard: handleCreateNewBoard,
+			onDeleteSuccess: handleBoardDeletedSuccess,
+		};
+	}, [
+		inputBoardId,
+		currentBoardId,
+		isLoading,
+		isFetching,
+		data?.name,
+		setInputBoardId,
+		handleLoadBoardStub,
+		resetBoardQueryCache,
+		handleCreateNewBoard,
+		handleBoardDeletedSuccess,
+	]);
+
+	return useMemo(() => {
+		return {
+			data,
+			error,
+			isCreatingBoard,
+			isError,
+			isInitialLoading,
+			setInputBoardId,
+			setIsCreatingBoard,
+			onBoardDeleted: handleBoardDeletedSuccess,
+			resetIdsAndExitCreate,
+			handleBoardCreated,
+			headerProps,
+		};
+	}, [
 		data,
 		error,
 		isCreatingBoard,
@@ -49,21 +89,9 @@ export const useBoardApp = (currentBoardId: string | undefined) => {
 		isInitialLoading,
 		setInputBoardId,
 		setIsCreatingBoard,
-		onBoardDeleted: handleBoardDeletedSuccess,
+		handleBoardDeletedSuccess,
 		resetIdsAndExitCreate,
 		handleBoardCreated,
-
-		headerProps: {
-			inputBoardId,
-			loadedBoardId: currentBoardId,
-			isLoading: isLoading,
-			isFetching: isFetching,
-			loadedBoardName: data?.name,
-			setInputBoardId,
-			handleLoadBoard: () => {},
-			resetBoardQueryCache,
-			onCreateNewBoard: handleCreateNewBoard,
-			onDeleteSuccess: handleBoardDeletedSuccess,
-		},
-	};
+		headerProps,
+	]);
 };

@@ -1,22 +1,27 @@
+import { lazy, Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import LoadingState from './components/ui/states/LoadingState';
 
-import BoardPage from './components/pages/BoardPage';
-import CreateBoardWrapper from './components/pages/CreateBoardWrapper';
-import HomeWrapper from './components/pages/HomeWrapper';
-
+const LazyHomeWrapper = lazy(() => import('./components/pages/HomeWrapper'));
+const LazyBoardPage = lazy(() => import('./components/pages/BoardPage'));
+const LazyCreatePage = lazy(
+	() => import('./components/pages/CreateBoardWrapper')
+);
 function App() {
 	return (
 		<Router>
 			<Toaster position='top-right' reverseOrder={false} />
-			<Routes>
-				<Route path='/' element={<HomeWrapper />} />
+			<Suspense fallback={<LoadingState header={undefined} />}>
+				<Routes>
+					<Route path='/' element={<LazyHomeWrapper />} />
 
-				<Route path='/create' element={<CreateBoardWrapper />} />
-				<Route path='/board/:boardId' element={<BoardPage />} />
+					<Route path='/create' element={<LazyCreatePage />} />
+					<Route path='/board/:boardId' element={<LazyBoardPage />} />
 
-				<Route path='*' element={<div>404 Not Found</div>} />
-			</Routes>
+					<Route path='*' element={<div>404 Not Found</div>} />
+				</Routes>
+			</Suspense>
 		</Router>
 	);
 }

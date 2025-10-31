@@ -65,4 +65,4 @@ const CardViewContent: React.FC<CardViewContentProps> = ({
 	);
 };
 
-export default CardViewContent;
+export default React.memo(CardViewContent);

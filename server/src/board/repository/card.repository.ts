@@ -125,8 +125,8 @@ export class CardRepository {
     dto: UpdateCardPositionDto,
     boardId: string,
   ): Promise<Card> {
-    const card = await this.findCardById(dto.cardId);
     return this.prisma.$transaction(async (prisma) => {
+      const card = await this.findCardById(dto.cardId);
       await this.handleOrderUpdates(
         prisma,
         card.id,
@@ -141,7 +141,6 @@ export class CardRepository {
         data: {
           column: dto.newColumn,
           orderIndex: dto.newOrderIndex,
-          updatedAt: new Date(),
         },
       });
 

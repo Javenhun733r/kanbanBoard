@@ -32,6 +32,11 @@ interface CreateCardPayload {
 	description: string;
 	column: ColumnStatus;
 }
+interface UpdateCardMutationPayload {
+	cardId: string;
+	uniqueHashedId: string;
+	payload: Partial<Card>;
+}
 
 export const boardsApi = createApi({
 	reducerPath: 'boardsApi',
@@ -81,17 +86,17 @@ export const boardsApi = createApi({
 			],
 		}),
 
-		updateCard: builder.mutation<
-			Card,
-			{ cardId: string; payload: Partial<Card> }
-		>({
+		updateCard: builder.mutation<Card, UpdateCardMutationPayload>({
 			query: ({ cardId, payload }) => ({
 				url: updateCardUrl(cardId),
 				method: 'PUT',
 				body: payload,
 			}),
-			invalidatesTags: [BOARDS_API_TAG],
+			invalidatesTags: (_, __, { uniqueHashedId }) => [
+				{ type: BOARDS_API_TAG, id: uniqueHashedId },
+			],
 		}),
+
 		deleteCard: builder.mutation<
 			void,
 			{ cardId: string; uniqueHashedId: string }
@@ -126,6 +131,7 @@ export const boardsApi = createApi({
 			}),
 			invalidatesTags: (_, __, uniqueHashedId) => [
 				{ type: BOARDS_API_TAG, id: uniqueHashedId },
+				BOARDS_API_TAG,
 			],
 		}),
 	}),

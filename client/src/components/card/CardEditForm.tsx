@@ -10,7 +10,11 @@ interface CardEditFormProps {
 	setIsEditing: (isEditing: boolean) => void;
 }
 
-const CardEditForm: React.FC<CardEditFormProps> = ({ card, setIsEditing }) => {
+const CardEditForm: React.FC<CardEditFormProps> = ({
+	boardId,
+	card,
+	setIsEditing,
+}) => {
 	const [title, setTitle] = useState(card.title);
 	const [description, setDescription] = useState(card.description || '');
 
@@ -27,6 +31,7 @@ const CardEditForm: React.FC<CardEditFormProps> = ({ card, setIsEditing }) => {
 		try {
 			await updateCard({
 				cardId: card.id,
+				uniqueHashedId: boardId,
 				payload: {
 					title: title.trim(),
 					description: description.trim(),

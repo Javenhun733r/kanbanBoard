@@ -24,13 +24,13 @@ const Column: React.FC<ColumnProps> = ({
 					ref={provided.innerRef}
 					{...provided.droppableProps}
 					className={`
-            w-[30%] p-4 rounded-lg shrink-0 min-h-[600px]
+            min-w-2xs p-4 rounded-lg shrink-0 min-h-[600px]
             ${
 							snapshot.isDraggingOver
 								? 'bg-indigo-50 border-indigo-400'
 								: 'bg-gray-100 border-gray-300'
 						} 
-            border-2 transition duration-200
+            border-2 transition-all duration-500
           `}
 				>
 					<h3 className='font-bold text-lg mb-4 text-gray-800 border-b-2 pb-2 text-center'>
@@ -59,4 +59,4 @@ const Column: React.FC<ColumnProps> = ({
 	);
 };
 
-export default Column;
+export default React.memo(Column);

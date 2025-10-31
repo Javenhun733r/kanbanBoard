@@ -79,4 +79,4 @@ const AddCardForm: React.FC<AddCardFormProps> = ({ boardId, columnStatus }) => {
 	);
 };
 
-export default AddCardForm;
+export default React.memo(AddCardForm);

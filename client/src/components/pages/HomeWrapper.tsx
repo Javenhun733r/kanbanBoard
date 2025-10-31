@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGetAllHashIdsQuery } from '../../api/boardApi';
 import { useBoardApp } from '../../hooks/useBoardApp';
@@ -8,23 +8,47 @@ const HomeWrapper: React.FC = () => {
 	const navigate = useNavigate();
 	const { headerProps } = useBoardApp(undefined);
 	const { data: allHashIds = [] } = useGetAllHashIdsQuery();
-	const handleLoadBoardFromHeader = (id: string) => {
-		if (id) {
-			navigate(`/board/${id}`);
-		}
-	};
 
-	const updatedHeaderProps = {
-		...headerProps,
-		loadedBoardId: headerProps.loadedBoardId || '',
-		handleLoadBoard: handleLoadBoardFromHeader,
-		onCreateNewBoard: () => navigate('/create'),
-		allHashIds: allHashIds,
-	};
+	const handleLoadBoardFromHeader = useCallback(
+		(id: string) => {
+			if (id) {
+				navigate(`/board/${id}`);
+			}
+		},
+		[navigate]
+	);
+
+	useMemo(() => {
+		return {
+			...headerProps,
+			loadedBoardId: headerProps.loadedBoardId || '',
+			handleLoadBoard: handleLoadBoardFromHeader,
+			onCreateNewBoard: () => navigate('/create'),
+			allHashIds: allHashIds,
+		};
+	}, [headerProps, handleLoadBoardFromHeader, navigate, allHashIds]);
+	const handleCreateNewBoard = useCallback(
+		() => navigate('/create'),
+		[navigate]
+	);
+	const finalHeaderProps = useMemo(() => {
+		return {
+			...headerProps,
+			loadedBoardId: headerProps.loadedBoardId || '',
+			handleLoadBoard: handleLoadBoardFromHeader,
+			onCreateNewBoard: handleCreateNewBoard,
+			allHashIds: allHashIds,
+		};
+	}, [
+		headerProps,
+		handleLoadBoardFromHeader,
+		handleCreateNewBoard,
+		allHashIds,
+	]);
 
 	return (
 		<div className='min-h-screen bg-gray-100'>
-			<BoardHeader {...updatedHeaderProps} />
+			<BoardHeader {...finalHeaderProps} />
 
 			<div className='p-6 text-center pt-[150px]'>
 				<h1 className='text-3xl font-bold text-gray-700'>Welcome!</h1>
