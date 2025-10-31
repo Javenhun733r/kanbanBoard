@@ -1,7 +1,7 @@
-import { Droppable } from '@hello-pangea/dnd';
-import React from 'react';
 import type { Card, ColumnStatus } from '@appTypes/entities/board.entity';
 import CardItem from '@components/card/CardItem';
+import { Droppable } from '@hello-pangea/dnd';
+import React from 'react';
 import AddCardForm from './AddCardForm';
 
 interface ColumnProps {
@@ -30,7 +30,7 @@ const Column: React.FC<ColumnProps> = ({
 								? 'bg-indigo-50 border-indigo-400'
 								: 'bg-gray-100 border-gray-300'
 						} 
-            border-2 transition-all duration-500
+            border-2 transition-all duration-200
           `}
 				>
 					<h3 className='font-bold text-lg mb-4 text-gray-800 border-b-2 pb-2 text-center'>
