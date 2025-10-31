@@ -1,13 +1,10 @@
-import { NotFoundError, UniqueConstraintError } from '@app/common/errors/error';
 import { PrismaEntityMapper } from '@app/board/mappers/prisma-entity.mapper';
-import {
-  CreateBoardDto,
-  UpdateBoardDto,
-} from '@app/dto/boardDTO/create-board.dto';
+import { NotFoundError } from '@app/common/errors/error';
+import { generateHashedId } from '@app/common/utils/id.utils';
+import { BoardDto } from '@app/dto/boardDTO/board.dto';
 import { Board } from '@app/entities/board.entity';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
-
+import { ConflictException, Injectable } from '@nestjs/common';
 @Injectable()
 export class BoardRepository {
   constructor(private prisma: PrismaService) {}
@@ -19,18 +16,23 @@ export class BoardRepository {
     });
     return boards.map((board) => board.uniqueHashedId);
   }
-  async createBoard(data: CreateBoardDto): Promise<Board> {
-    const prismaResult = await this.prisma.board.create({ data }).catch(() => {
-      throw new UniqueConstraintError(
-        `Board with ID "${data.uniqueHashedId}" already exists.`,
-      );
-    });
+  async createBoard(data: BoardDto): Promise<Board> {
+    const uniqueHashedId = generateHashedId();
+    const prismaResult = await this.prisma.board
+      .create({
+        data: {
+          name: data.name,
+          uniqueHashedId,
+        },
+      })
+      .catch(() => {
+        throw new ConflictException(
+          'Could not create board due to a unique identifier conflict. Please try again.',
+        );
+      });
     return PrismaEntityMapper.toBoardEntity(prismaResult);
   }
-  async updateBoard(
-    uniqueHashedId: string,
-    data: UpdateBoardDto,
-  ): Promise<Board> {
+  async updateBoard(uniqueHashedId: string, data: BoardDto): Promise<Board> {
     const prismaResult = await this.prisma.board
       .update({
         where: { uniqueHashedId },

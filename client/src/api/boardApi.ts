@@ -25,7 +25,6 @@ interface UpdateBoardPayload {
 }
 interface CreateBoardPayload {
 	name: string;
-	uniqueHashedId: string;
 }
 interface CreateCardPayload {
 	title: string;

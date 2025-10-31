@@ -1,11 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UpdateCardPositionDto } from '@app/dto/index.dto';
-import { BoardResponseDto } from '@app/dto/response.dto';
-import { Board, Card, ColumnStatus } from '@app/entities/board.entity';
 import { BoardController } from '@app/board/board.controller';
 import { BoardService } from '@app/board/board.service';
 import { BoardMapper } from '@app/board/mappers/board.mapper';
 import { BoardRepository } from '@app/board/repository/board.repository';
+import { UpdateCardPositionDto } from '@app/dto/index.dto';
+import { BoardResponseDto } from '@app/dto/response.dto';
+import { Board, Card, ColumnStatus } from '@app/entities/board.entity';
+import { Test, TestingModule } from '@nestjs/testing';
 
 const MOCK_BOARD_HASH_ID = 'TEST-001';
 const MOCK_CARD_ID = 'CARD-UUID-123';
@@ -48,10 +48,11 @@ describe('BoardController', () => {
   });
 
   it('should call boardService.createBoard on POST request and map the result', async () => {
-    const createDto = { name: 'New Test Board', uniqueHashedId: 'TEST-NEW' };
+    const createDto = { name: 'New Test Board' };
 
-    const createdEntity = {
+    const createdEntity: Board & { cards: Card[] } = {
       id: 'uuid-2',
+      uniqueHashedId: 'TEST-NEW',
       ...createDto,
       cards: [],
       createdAt: new Date(),
@@ -71,7 +72,6 @@ describe('BoardController', () => {
     expect(service.createBoard).toHaveBeenCalledWith(createDto);
     expect(result).toEqual(expectedDto);
   });
-
   it('should call boardService.getBoardWithCards using Param ID and map the result', async () => {
     const boardEntity: Board & { cards: Card[] } = {
       id: 'uuid-1',

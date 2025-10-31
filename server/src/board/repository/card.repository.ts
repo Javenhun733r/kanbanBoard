@@ -3,7 +3,7 @@ import { NotFoundError } from '@app/common/errors/error';
 import {
   getShiftParameters,
   updateOrderIndices,
-} from '@app/common/utils/order-utils';
+} from '@app/common/utils/order.utils';
 import { CreateCardDto, UpdateCardDto } from '@app/dto/cardDTO/create-card.dto';
 import { UpdateCardPositionDto } from '@app/dto/index.dto';
 import { Card, ColumnStatus } from '@app/entities/board.entity';

@@ -12,7 +12,7 @@ function App() {
 	return (
 		<Router>
 			<Toaster position='top-right' reverseOrder={false} />
-			<Suspense fallback={<LoadingState header={undefined} />}>
+			<Suspense fallback={<LoadingState />}>
 				<Routes>
 					<Route path='/' element={<LazyHomeWrapper />} />
 

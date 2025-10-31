@@ -1,7 +1,6 @@
 import {
-  CreateBoardDto,
+  BoardDto,
   CreateCardDto,
-  UpdateBoardDto,
   UpdateCardDto,
   UpdateCardPositionDto,
 } from '@app/dto/index.dto';
@@ -19,13 +18,13 @@ export class BoardService {
     private readonly boardRepository: BoardRepository,
     private readonly cardRepository: CardRepository,
   ) {}
-  createBoard(data: CreateBoardDto): Promise<Board> {
+  createBoard(data: BoardDto): Promise<Board> {
     return this.boardRepository.createBoard(data);
   }
   getAllBoardsUniqueHashId(): Promise<string[]> {
     return this.boardRepository.getAllBoardsUniqueHashId();
   }
-  updateBoard(uniqueHashedId: string, data: UpdateBoardDto): Promise<Board> {
+  updateBoard(uniqueHashedId: string, data: BoardDto): Promise<Board> {
     return this.boardRepository.updateBoard(uniqueHashedId, data);
   }
 

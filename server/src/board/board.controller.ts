@@ -13,9 +13,8 @@ import {
 import { BoardService } from '@app/board/board.service';
 import { BoardMapper } from '@app/board/mappers/board.mapper';
 import {
-  CreateBoardDto,
+  BoardDto,
   CreateCardDto,
-  UpdateBoardDto,
   UpdateCardDto,
   UpdateCardPositionDto,
 } from '@app/dto/index.dto';
@@ -31,10 +30,8 @@ export class BoardController {
   }
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async createBoard(
-    @Body() createBoardDto: CreateBoardDto,
-  ): Promise<BoardResponseDto> {
-    const boardEntity = await this.boardService.createBoard(createBoardDto);
+  async createBoard(@Body() data: BoardDto): Promise<BoardResponseDto> {
+    const boardEntity = await this.boardService.createBoard(data);
     return BoardMapper.toBoardResponseDto({ ...boardEntity, cards: [] });
   }
 
@@ -51,7 +48,7 @@ export class BoardController {
   @Put(':uniqueHashedId')
   async updateBoard(
     @Param('uniqueHashedId') uniqueHashedId: string,
-    @Body() updateBoardDto: UpdateBoardDto,
+    @Body() updateBoardDto: BoardDto,
   ): Promise<BoardResponseDto> {
     const updatedBoard = await this.boardService.updateBoard(
       uniqueHashedId,

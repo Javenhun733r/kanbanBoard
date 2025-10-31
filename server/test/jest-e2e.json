@@ -10,5 +10,8 @@
     "^@app/(.*)$": "<rootDir>/src/$1",
 
     "^generated/prisma$": "<rootDir>/node_modules/@prisma/client"
-  }
+  },
+  "transformIgnorePatterns": [
+    "/node_modules/(?!@paralleldrive/cuid2|@noble/hashes)"
+  ]
 }

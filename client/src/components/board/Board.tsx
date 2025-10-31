@@ -20,7 +20,7 @@ const Board: React.FC<BoardProps> = ({ boardData }) => {
 	);
 	const doneCards = useMemo(() => columns.Done, [columns.Done]);
 	return (
-		<div className='p-6 bg-gray-50 min-h-screen'>
+		<div className='p-6 bg-gray-50 min-h-screen relative'>
 			<DragDropContext onDragEnd={onDragEnd}>
 				<div className='flex space-x-6 overflow-x-auto min-w-full transition-all duration-100 ease-in-out'>
 					<Column

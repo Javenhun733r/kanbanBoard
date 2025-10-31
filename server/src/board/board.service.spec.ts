@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundError, UniqueConstraintError } from '@app/common/errors/error';
-import { UpdateCardPositionDto } from '@app/dto/index.dto';
-import { Board, Card, ColumnStatus } from '@app/entities/board.entity';
 import { BoardService } from '@app/board/board.service';
 import { BoardRepository } from '@app/board/repository/board.repository';
 import { CardRepository } from '@app/board/repository/card.repository';
+import { NotFoundError } from '@app/common/errors/error';
+import { UpdateCardPositionDto } from '@app/dto/index.dto';
+import { Board, Card, ColumnStatus } from '@app/entities/board.entity';
+import { Test, TestingModule } from '@nestjs/testing';
 
 const mockBoardRepository = {
   createBoard: jest.fn(),
@@ -61,7 +61,7 @@ describe('BoardsService', () => {
   it('should successfully create a board', async () => {
     const mockBoard: Board & { cards: Card[] } = {
       id: 'uuid-1',
-      uniqueHashedId: 'TEST-001',
+      uniqueHashedId: 'TEST-NEW',
       name: 'Test Board',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -72,19 +72,19 @@ describe('BoardsService', () => {
 
     const result = await service.createBoard({
       name: 'Test Board',
-      uniqueHashedId: 'TEST-001',
     });
+
     expect(result.name).toEqual('Test Board');
+    expect(mockBoardRepository.createBoard).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'Test Board' }),
+    );
   });
 
-  it('should throw UniqueConstraintError', async () => {
-    mockBoardRepository.createBoard.mockRejectedValue(
-      new UniqueConstraintError('Board already exists'),
-    );
+  it('should successfully retrieve a board with cards', async () => {
+    const result = await service.getBoardWithCards('TEST-001');
 
-    await expect(
-      service.createBoard({ name: 'Test', uniqueHashedId: 'EXIST' }),
-    ).rejects.toThrow(UniqueConstraintError);
+    expect(result.uniqueHashedId).toEqual('TEST-001');
+    expect(mockBoardRepository.findByUniqueId).toHaveBeenCalledWith('TEST-001');
   });
 
   it('should successfully update board name', async () => {

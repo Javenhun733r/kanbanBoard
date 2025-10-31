@@ -48,7 +48,7 @@ const CardItem: React.FC<CardItemProps> = ({ card, index, boardId }) => {
 						snapshot.isDragging
 							? 'bg-blue-100 border-blue-500 ring-2 ring-blue-500'
 							: 'bg-white border-gray-300 hover:shadow-lg'
-					} transition-all duration-100 ease-in-out cursor-pointer group ${
+					} transition-all duration-75 ease-in-out cursor-pointer group ${
 						isEditing ? 'pointer-events-auto' : ''
 					}`}
 					{...(isEditing ? { 'data-is-editing': true } : {})}

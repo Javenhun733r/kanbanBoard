@@ -1,7 +1,6 @@
-import React from 'react';
-import { useCreateBoardForm } from '@hooks/useCreateBoardForm';
-import { generateHashedId } from '@utils/id.utils';
 import Button from '@components/ui/button/Button';
+import { useCreateBoardForm } from '@hooks/useCreateBoardForm';
+import React from 'react';
 
 interface CreateBoardFormProps {
 	onBoardCreated: (newId: string) => void;
@@ -13,14 +12,9 @@ const CreateBoardForm: React.FC<CreateBoardFormProps> = ({
 	onBoardCreated,
 	onCancel,
 }) => {
-	const {
-		name,
-		uniqueHashedId,
-		isLoading,
-		setName,
-		setUniqueHashedId,
-		handleSubmit,
-	} = useCreateBoardForm({ onSuccess: onBoardCreated });
+	const { name, isLoading, setName, handleSubmit } = useCreateBoardForm({
+		onSuccess: onBoardCreated,
+	});
 
 	const handleCancel = () => {
 		if (onCancel) {
@@ -47,28 +41,6 @@ const CreateBoardForm: React.FC<CreateBoardFormProps> = ({
 						className='w-full p-2 border rounded-md mt-1'
 						required
 					/>
-				</div>
-				<div className='mb-4'>
-					<label className='block text-sm font-medium text-gray-700'>
-						Unique ID (e.g., TEAM-001)
-					</label>
-					<div className='flex space-x-2'>
-						<input
-							type='text'
-							value={uniqueHashedId}
-							onChange={e => setUniqueHashedId(e.target.value.toUpperCase())}
-							className='w-full p-2 border rounded-md mt-1 font-mono'
-							required
-						/>
-						<Button
-							type='button'
-							variant='secondary'
-							onClick={() => setUniqueHashedId(generateHashedId())}
-							className='mt-1'
-						>
-							Generate
-						</Button>
-					</div>
 				</div>
 				<div className='flex justify-end space-x-3 mt-6'>
 					<Button type='button' variant='ghost' onClick={handleCancel}>
