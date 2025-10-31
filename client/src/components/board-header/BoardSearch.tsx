@@ -1,5 +1,5 @@
-import React from 'react';
 import Button from '@components/ui/button/Button';
+import React from 'react';
 interface BoardSearchProps {
 	inputBoardId: string;
 	loadedBoardId: string;
@@ -24,7 +24,7 @@ const BoardSearch: React.FC<BoardSearchProps> = ({
 			? allHashIds
 					.filter(
 						id =>
-							id.toLowerCase().startsWith(inputBoardId.toLowerCase()) &&
+							id.toLowerCase().includes(inputBoardId.toLowerCase()) &&
 							id !== inputBoardId
 					)
 					.slice(0, 5)
