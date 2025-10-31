@@ -2,13 +2,18 @@ import type { ColumnStatus } from '@appTypes/entities/board.entity';
 import Button from '@components/ui/button/Button';
 import { useCreateCardForm } from '@hooks/useCreateCardForm';
 import React from 'react';
-
+import { toast } from 'react-hot-toast';
 interface AddCardFormProps {
 	boardId: string;
 	columnStatus: ColumnStatus;
+	isCardSaving: boolean;
 }
 
-const AddCardForm: React.FC<AddCardFormProps> = ({ boardId, columnStatus }) => {
+const AddCardForm: React.FC<AddCardFormProps> = ({
+	boardId,
+	columnStatus,
+	isCardSaving,
+}) => {
 	const {
 		formData,
 		isFormVisible,
@@ -18,7 +23,7 @@ const AddCardForm: React.FC<AddCardFormProps> = ({ boardId, columnStatus }) => {
 		handleSubmit,
 	} = useCreateCardForm({
 		uniqueHashedId: boardId,
-		onSuccess: () => console.log('Card created!'),
+		onSuccess: () => toast.success('Card created!'),
 		initialColumn: columnStatus,
 	});
 
@@ -68,6 +73,7 @@ const AddCardForm: React.FC<AddCardFormProps> = ({ boardId, columnStatus }) => {
 				renderForm
 			) : (
 				<Button
+					disabled={isCardSaving}
 					onClick={() => setIsFormVisible(true)}
 					variant='secondary'
 					className='w-full p-2'

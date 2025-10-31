@@ -7,7 +7,8 @@ import { useCallback } from 'react';
 import toast from 'react-hot-toast';
 
 export const useCardDragAndDrop = (boardId: string) => {
-	const [updateCardPosition] = useUpdateCardPositionMutation();
+	const [updateCardPosition, { isLoading: isCardSaving }] =
+		useUpdateCardPositionMutation();
 
 	const onDragEnd = useCallback(
 		(result: DropResult) => {
@@ -52,5 +53,5 @@ export const useCardDragAndDrop = (boardId: string) => {
 		[boardId, updateCardPosition]
 	);
 
-	return { onDragEnd };
+	return { onDragEnd, isCardSaving };
 };

@@ -9,6 +9,7 @@ interface ColumnProps {
 	cards: Card[];
 	droppableId: string;
 	boardId: string;
+	isCardSaving: boolean;
 }
 
 const Column: React.FC<ColumnProps> = ({
@@ -16,9 +17,10 @@ const Column: React.FC<ColumnProps> = ({
 	cards,
 	droppableId,
 	boardId,
+	isCardSaving,
 }) => {
 	return (
-		<Droppable droppableId={droppableId}>
+		<Droppable droppableId={droppableId} isDropDisabled={isCardSaving}>
 			{(provided, snapshot) => (
 				<div
 					ref={provided.innerRef}
@@ -44,6 +46,7 @@ const Column: React.FC<ColumnProps> = ({
 								card={card}
 								index={index}
 								boardId={boardId}
+								isCardSaving={isCardSaving}
 							/>
 						))}
 						{provided.placeholder}
@@ -52,6 +55,7 @@ const Column: React.FC<ColumnProps> = ({
 					<AddCardForm
 						boardId={boardId}
 						columnStatus={droppableId as ColumnStatus}
+						isCardSaving={isCardSaving}
 					/>
 				</div>
 			)}

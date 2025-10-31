@@ -1,18 +1,16 @@
-import React, { useCallback, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useGetAllHashIdsQuery } from '@api/boardApi';
-import { useBoardApp } from '@hooks/useBoardApp';
-import { formatApiError } from '@utils/error.utils';
 import BoardHeader from '@components/board-header/BoardHeader';
 import Board from '@components/board/Board';
-import LoadingState from '@components/ui/states/LoadingState';
 import StatusWrapper from '@components/ui/wrappers/StatusWrapper';
+import { useBoardApp } from '@hooks/useBoardApp';
+import { formatApiError } from '@utils/error.utils';
+import React, { useCallback, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const BoardPage: React.FC = () => {
 	const { boardId } = useParams<{ boardId: string }>();
 	const navigate = useNavigate();
-	const { data, error, isError, isInitialLoading, headerProps } =
-		useBoardApp(boardId);
+	const { data, error, isError, headerProps } = useBoardApp(boardId);
 	const { data: allHashIds = [] } = useGetAllHashIdsQuery();
 	const handleLoadBoard = useCallback(
 		(idToLoad: string) => {
@@ -50,10 +48,6 @@ const BoardPage: React.FC = () => {
 	]);
 
 	const headerComponent = <BoardHeader {...updatedHeaderProps} />;
-
-	if (isInitialLoading) {
-		return <LoadingState header={headerComponent} />;
-	}
 
 	if (isError) {
 		const { statusText, finalMessage } = formatApiError(error, boardId || '');

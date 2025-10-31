@@ -12,7 +12,7 @@ const Board: React.FC<BoardProps> = ({ boardData }) => {
 	const columns = boardData.columns;
 	const boardId = boardData.uniqueHashedId;
 
-	const { onDragEnd } = useCardDragAndDrop(boardId);
+	const { onDragEnd, isCardSaving } = useCardDragAndDrop(boardId);
 	const todoCards = useMemo(() => columns.ToDo, [columns.ToDo]);
 	const inProgressCards = useMemo(
 		() => columns.InProgress,
@@ -22,24 +22,27 @@ const Board: React.FC<BoardProps> = ({ boardData }) => {
 	return (
 		<div className='p-6 bg-gray-50 min-h-screen relative'>
 			<DragDropContext onDragEnd={onDragEnd}>
-				<div className='flex space-x-6 overflow-x-auto min-w-full transition-all duration-100 ease-in-out'>
+				<div className='flex space-x-6 overflow-x-auto min-w-full transition-all duration-100 ease-in-out  '>
 					<Column
 						title='ToDo'
 						cards={todoCards}
 						droppableId='ToDo'
 						boardId={boardId}
+						isCardSaving={isCardSaving}
 					/>
 					<Column
 						title='In Progress'
 						cards={inProgressCards}
 						droppableId='InProgress'
 						boardId={boardId}
+						isCardSaving={isCardSaving}
 					/>
 					<Column
 						title='Done'
 						cards={doneCards}
 						droppableId='Done'
 						boardId={boardId}
+						isCardSaving={isCardSaving}
 					/>
 				</div>
 			</DragDropContext>
